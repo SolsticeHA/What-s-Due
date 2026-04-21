@@ -4,9 +4,9 @@
   "codeowners": ["@SolsticeHA"],
   "config_flow": true,
   "dependencies": ["frontend", "http", "websocket_api"],
-  "documentation": "https://github.com/SolsticeHA/whats_due",
+  "documentation": "https://github.com/SolsticeHA/What-s-Due",
   "iot_class": "local_push",
-  "issue_tracker": "https://github.com/SolsticeHA/whats_due/issues",
+  "issue_tracker": "https://github.com/SolsticeHA/What-s-Due/issues",
   "requirements": [],
   "version": "0.1.0"
 }

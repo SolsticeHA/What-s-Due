@@ -18,7 +18,7 @@ A Home Assistant custom integration for tracking anything with a due date — ca
 ### Via HACS (recommended)
 
 1. In Home Assistant: *HACS → Integrations → ⋮ → Custom repositories*.
-2. Add `https://github.com/SolsticeHA/whats_due` with category **Integration**.
+2. Add `https://github.com/SolsticeHA/What-s-Due` with category **Integration**.
 3. Find **What's Due** in the list and click *Download*.
 4. Restart Home Assistant.
 5. *Settings → Devices & Services → Add Integration → What's Due*.
