@@ -108,25 +108,23 @@ export class WdItemDialog extends LitElement {
               this._patch("due_date", (e.target as HTMLInputElement).value)}
           ></ha-textfield>
 
-          <label class="wd-field">
+          <div class="wd-field">
             <span>${s.category}</span>
-            <select
-              .value=${d.category_id}
-              @change=${(e: Event) =>
-                this._patch(
-                  "category_id",
-                  (e.target as HTMLSelectElement).value
-                )}
-            >
+            <div class="wd-chip-group">
               ${this.categories.map(
                 (c) => html`
-                  <option value=${c.id} ?selected=${c.id === d.category_id}>
+                  <button
+                    type="button"
+                    class="wd-chip ${d.category_id === c.id ? "active" : ""}"
+                    @click=${() => this._patch("category_id", c.id)}
+                  >
+                    <ha-icon .icon=${c.icon}></ha-icon>
                     ${c.name}
-                  </option>
+                  </button>
                 `
               )}
-            </select>
-          </label>
+            </div>
+          </div>
 
           <wd-icon-picker
             .label=${s.icon}
@@ -135,30 +133,29 @@ export class WdItemDialog extends LitElement {
               this._patch("icon", e.detail.value)}
           ></wd-icon-picker>
 
-          <label class="wd-field">
+          <div class="wd-field">
             <span>${s.recurrence}</span>
-            <select
-              .value=${d.recurrence}
-              @change=${(e: Event) =>
-                this._patch(
-                  "recurrence",
-                  (e.target as HTMLSelectElement).value as Recurrence
-                )}
-            >
-              <option value="none" ?selected=${d.recurrence === "none"}>
-                ${s.recurrenceNone}
-              </option>
-              <option value="monthly" ?selected=${d.recurrence === "monthly"}>
-                ${s.recurrenceMonthly}
-              </option>
-              <option value="yearly" ?selected=${d.recurrence === "yearly"}>
-                ${s.recurrenceYearly}
-              </option>
-              <option value="custom" ?selected=${d.recurrence === "custom"}>
-                ${s.recurrenceCustom}
-              </option>
-            </select>
-          </label>
+            <div class="wd-chip-group">
+              ${(
+                [
+                  ["none", s.recurrenceNone],
+                  ["monthly", s.recurrenceMonthly],
+                  ["yearly", s.recurrenceYearly],
+                  ["custom", s.recurrenceCustom],
+                ] as Array<[Recurrence, string]>
+              ).map(
+                ([value, label]) => html`
+                  <button
+                    type="button"
+                    class="wd-chip ${d.recurrence === value ? "active" : ""}"
+                    @click=${() => this._patch("recurrence", value)}
+                  >
+                    ${label}
+                  </button>
+                `
+              )}
+            </div>
+          </div>
 
           ${d.recurrence === "custom"
             ? html`

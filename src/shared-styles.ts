@@ -93,4 +93,32 @@ export const layoutStyles = css`
     outline: none;
     border-color: var(--primary-color);
   }
+
+  .wd-chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .wd-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--secondary-background-color);
+    border: 1px solid var(--divider-color);
+    color: var(--primary-text-color);
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform 100ms ease, background 100ms ease;
+  }
+  .wd-chip:hover { transform: translateY(-1px); }
+  .wd-chip.active {
+    background: var(--primary-color);
+    color: var(--text-primary-color, #fff);
+    border-color: transparent;
+  }
+  .wd-chip ha-icon { --mdc-icon-size: 16px; }
 `;
