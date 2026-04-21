@@ -1,0 +1,12 @@
+{
+  "domain": "whats_due",
+  "name": "What's Due",
+  "codeowners": ["@SolsticeHA"],
+  "config_flow": true,
+  "dependencies": ["frontend", "http", "websocket_api"],
+  "documentation": "https://github.com/SolsticeHA/whats_due",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/SolsticeHA/whats_due/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}

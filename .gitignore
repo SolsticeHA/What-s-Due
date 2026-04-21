@@ -1,0 +1,33 @@
+# Node / frontend build
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-store/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+.python-version
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local HA dev links / test output
+.storage_test/
+*.local.json
+
+# Rollup/TS build scratch
+custom_components/whats_due/frontend/.tsbuild/

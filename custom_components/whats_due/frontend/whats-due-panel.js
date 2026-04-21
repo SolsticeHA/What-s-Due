@@ -1,0 +1,568 @@
+function t(t,e,i,s){var a,r=arguments.length,o=r<3?e:null===s?s=Object.getOwnPropertyDescriptor(e,i):s;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)o=Reflect.decorate(t,e,i,s);else for(var n=t.length-1;n>=0;n--)(a=t[n])&&(o=(r<3?a(o):r>3?a(e,i,o):a(e,i))||o);return r>3&&o&&Object.defineProperty(e,i,o),o}"function"==typeof SuppressedError&&SuppressedError;const e=globalThis,i=e.ShadowRoot&&(void 0===e.ShadyCSS||e.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s=Symbol(),a=new WeakMap;let r=class{constructor(t,e,i){if(this._$cssResult$=!0,i!==s)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e}get styleSheet(){let t=this.o;const e=this.t;if(i&&void 0===t){const i=void 0!==e&&1===e.length;i&&(t=a.get(e)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),i&&a.set(e,t))}return t}toString(){return this.cssText}};const o=(t,...e)=>{const i=1===t.length?t[0]:e.reduce((e,i,s)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(i)+t[s+1],t[0]);return new r(i,t,s)},n=i?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const i of t.cssRules)e+=i.cssText;return(t=>new r("string"==typeof t?t:t+"",void 0,s))(e)})(t):t,{is:c,defineProperty:l,getOwnPropertyDescriptor:d,getOwnPropertyNames:h,getOwnPropertySymbols:p,getPrototypeOf:u}=Object,g=globalThis,m=g.trustedTypes,y=m?m.emptyScript:"",$=g.reactiveElementPolyfillSupport,f=(t,e)=>t,v={toAttribute(t,e){switch(e){case Boolean:t=t?y:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t)}return t},fromAttribute(t,e){let i=t;switch(e){case Boolean:i=null!==t;break;case Number:i=null===t?null:Number(t);break;case Object:case Array:try{i=JSON.parse(t)}catch(t){i=null}}return i}},_=(t,e)=>!c(t,e),w={attribute:!0,type:String,converter:v,reflect:!1,useDefault:!1,hasChanged:_};Symbol.metadata??=Symbol("metadata"),g.litPropertyMetadata??=new WeakMap;let b=class extends HTMLElement{static addInitializer(t){this._$Ei(),(this.l??=[]).push(t)}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(t,e=w){if(e.state&&(e.attribute=!1),this._$Ei(),this.prototype.hasOwnProperty(t)&&((e=Object.create(e)).wrapped=!0),this.elementProperties.set(t,e),!e.noAccessor){const i=Symbol(),s=this.getPropertyDescriptor(t,i,e);void 0!==s&&l(this.prototype,t,s)}}static getPropertyDescriptor(t,e,i){const{get:s,set:a}=d(this.prototype,t)??{get(){return this[e]},set(t){this[e]=t}};return{get:s,set(e){const r=s?.call(this);a?.call(this,e),this.requestUpdate(t,r,i)},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)??w}static _$Ei(){if(this.hasOwnProperty(f("elementProperties")))return;const t=u(this);t.finalize(),void 0!==t.l&&(this.l=[...t.l]),this.elementProperties=new Map(t.elementProperties)}static finalize(){if(this.hasOwnProperty(f("finalized")))return;if(this.finalized=!0,this._$Ei(),this.hasOwnProperty(f("properties"))){const t=this.properties,e=[...h(t),...p(t)];for(const i of e)this.createProperty(i,t[i])}const t=this[Symbol.metadata];if(null!==t){const e=litPropertyMetadata.get(t);if(void 0!==e)for(const[t,i]of e)this.elementProperties.set(t,i)}this._$Eh=new Map;for(const[t,e]of this.elementProperties){const i=this._$Eu(t,e);void 0!==i&&this._$Eh.set(i,t)}this.elementStyles=this.finalizeStyles(this.styles)}static finalizeStyles(t){const e=[];if(Array.isArray(t)){const i=new Set(t.flat(1/0).reverse());for(const t of i)e.unshift(n(t))}else void 0!==t&&e.push(n(t));return e}static _$Eu(t,e){const i=e.attribute;return!1===i?void 0:"string"==typeof i?i:"string"==typeof t?t.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Em=null,this._$Ev()}_$Ev(){this._$ES=new Promise(t=>this.enableUpdating=t),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(t=>t(this))}addController(t){(this._$EO??=new Set).add(t),void 0!==this.renderRoot&&this.isConnected&&t.hostConnected?.()}removeController(t){this._$EO?.delete(t)}_$E_(){const t=new Map,e=this.constructor.elementProperties;for(const i of e.keys())this.hasOwnProperty(i)&&(t.set(i,this[i]),delete this[i]);t.size>0&&(this._$Ep=t)}createRenderRoot(){const t=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return((t,s)=>{if(i)t.adoptedStyleSheets=s.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet);else for(const i of s){const s=document.createElement("style"),a=e.litNonce;void 0!==a&&s.setAttribute("nonce",a),s.textContent=i.cssText,t.appendChild(s)}})(t,this.constructor.elementStyles),t}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(!0),this._$EO?.forEach(t=>t.hostConnected?.())}enableUpdating(t){}disconnectedCallback(){this._$EO?.forEach(t=>t.hostDisconnected?.())}attributeChangedCallback(t,e,i){this._$AK(t,i)}_$ET(t,e){const i=this.constructor.elementProperties.get(t),s=this.constructor._$Eu(t,i);if(void 0!==s&&!0===i.reflect){const a=(void 0!==i.converter?.toAttribute?i.converter:v).toAttribute(e,i.type);this._$Em=t,null==a?this.removeAttribute(s):this.setAttribute(s,a),this._$Em=null}}_$AK(t,e){const i=this.constructor,s=i._$Eh.get(t);if(void 0!==s&&this._$Em!==s){const t=i.getPropertyOptions(s),a="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==t.converter?.fromAttribute?t.converter:v;this._$Em=s;const r=a.fromAttribute(e,t.type);this[s]=r??this._$Ej?.get(s)??r,this._$Em=null}}requestUpdate(t,e,i,s=!1,a){if(void 0!==t){const r=this.constructor;if(!1===s&&(a=this[t]),i??=r.getPropertyOptions(t),!((i.hasChanged??_)(a,e)||i.useDefault&&i.reflect&&a===this._$Ej?.get(t)&&!this.hasAttribute(r._$Eu(t,i))))return;this.C(t,e,i)}!1===this.isUpdatePending&&(this._$ES=this._$EP())}C(t,e,{useDefault:i,reflect:s,wrapped:a},r){i&&!(this._$Ej??=new Map).has(t)&&(this._$Ej.set(t,r??e??this[t]),!0!==a||void 0!==r)||(this._$AL.has(t)||(this.hasUpdated||i||(e=void 0),this._$AL.set(t,e)),!0===s&&this._$Em!==t&&(this._$Eq??=new Set).add(t))}async _$EP(){this.isUpdatePending=!0;try{await this._$ES}catch(t){Promise.reject(t)}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(const[t,e]of this._$Ep)this[t]=e;this._$Ep=void 0}const t=this.constructor.elementProperties;if(t.size>0)for(const[e,i]of t){const{wrapped:t}=i,s=this[e];!0!==t||this._$AL.has(e)||void 0===s||this.C(e,void 0,i,s)}}let t=!1;const e=this._$AL;try{t=this.shouldUpdate(e),t?(this.willUpdate(e),this._$EO?.forEach(t=>t.hostUpdate?.()),this.update(e)):this._$EM()}catch(e){throw t=!1,this._$EM(),e}t&&this._$AE(e)}willUpdate(t){}_$AE(t){this._$EO?.forEach(t=>t.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t)}_$EM(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(t){return!0}update(t){this._$Eq&&=this._$Eq.forEach(t=>this._$ET(t,this[t])),this._$EM()}updated(t){}firstUpdated(t){}};b.elementStyles=[],b.shadowRootOptions={mode:"open"},b[f("elementProperties")]=new Map,b[f("finalized")]=new Map,$?.({ReactiveElement:b}),(g.reactiveElementVersions??=[]).push("2.1.2");const x=globalThis,A=t=>t,C=x.trustedTypes,E=C?C.createPolicy("lit-html",{createHTML:t=>t}):void 0,S="$lit$",k=`lit$${Math.random().toFixed(9).slice(2)}$`,D="?"+k,P=`<${D}>`,O=document,U=()=>O.createComment(""),M=t=>null===t||"object"!=typeof t&&"function"!=typeof t,I=Array.isArray,N="[ \t\n\f\r]",T=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,z=/-->/g,R=/>/g,H=RegExp(`>|${N}(?:([^\\s"'>=/]+)(${N}*=${N}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),j=/'/g,L=/"/g,W=/^(?:script|style|textarea|title)$/i,q=(t=>(e,...i)=>({_$litType$:t,strings:e,values:i}))(1),B=Symbol.for("lit-noChange"),V=Symbol.for("lit-nothing"),Y=new WeakMap,F=O.createTreeWalker(O,129);function K(t,e){if(!I(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==E?E.createHTML(e):e}const J=(t,e)=>{const i=t.length-1,s=[];let a,r=2===e?"<svg>":3===e?"<math>":"",o=T;for(let e=0;e<i;e++){const i=t[e];let n,c,l=-1,d=0;for(;d<i.length&&(o.lastIndex=d,c=o.exec(i),null!==c);)d=o.lastIndex,o===T?"!--"===c[1]?o=z:void 0!==c[1]?o=R:void 0!==c[2]?(W.test(c[2])&&(a=RegExp("</"+c[2],"g")),o=H):void 0!==c[3]&&(o=H):o===H?">"===c[0]?(o=a??T,l=-1):void 0===c[1]?l=-2:(l=o.lastIndex-c[2].length,n=c[1],o=void 0===c[3]?H:'"'===c[3]?L:j):o===L||o===j?o=H:o===z||o===R?o=T:(o=H,a=void 0);const h=o===H&&t[e+1].startsWith("/>")?" ":"";r+=o===T?i+P:l>=0?(s.push(n),i.slice(0,l)+S+i.slice(l)+k+h):i+k+(-2===l?e:h)}return[K(t,r+(t[i]||"<?>")+(2===e?"</svg>":3===e?"</math>":"")),s]};class Z{constructor({strings:t,_$litType$:e},i){let s;this.parts=[];let a=0,r=0;const o=t.length-1,n=this.parts,[c,l]=J(t,e);if(this.el=Z.createElement(c,i),F.currentNode=this.el.content,2===e||3===e){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes)}for(;null!==(s=F.nextNode())&&n.length<o;){if(1===s.nodeType){if(s.hasAttributes())for(const t of s.getAttributeNames())if(t.endsWith(S)){const e=l[r++],i=s.getAttribute(t).split(k),o=/([.?@])?(.*)/.exec(e);n.push({type:1,index:a,name:o[2],strings:i,ctor:"."===o[1]?et:"?"===o[1]?it:"@"===o[1]?st:tt}),s.removeAttribute(t)}else t.startsWith(k)&&(n.push({type:6,index:a}),s.removeAttribute(t));if(W.test(s.tagName)){const t=s.textContent.split(k),e=t.length-1;if(e>0){s.textContent=C?C.emptyScript:"";for(let i=0;i<e;i++)s.append(t[i],U()),F.nextNode(),n.push({type:2,index:++a});s.append(t[e],U())}}}else if(8===s.nodeType)if(s.data===D)n.push({type:2,index:a});else{let t=-1;for(;-1!==(t=s.data.indexOf(k,t+1));)n.push({type:7,index:a}),t+=k.length-1}a++}}static createElement(t,e){const i=O.createElement("template");return i.innerHTML=t,i}}function G(t,e,i=t,s){if(e===B)return e;let a=void 0!==s?i._$Co?.[s]:i._$Cl;const r=M(e)?void 0:e._$litDirective$;return a?.constructor!==r&&(a?._$AO?.(!1),void 0===r?a=void 0:(a=new r(t),a._$AT(t,i,s)),void 0!==s?(i._$Co??=[])[s]=a:i._$Cl=a),void 0!==a&&(e=G(t,a._$AS(t,e.values),a,s)),e}class Q{constructor(t,e){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=e}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:e},parts:i}=this._$AD,s=(t?.creationScope??O).importNode(e,!0);F.currentNode=s;let a=F.nextNode(),r=0,o=0,n=i[0];for(;void 0!==n;){if(r===n.index){let e;2===n.type?e=new X(a,a.nextSibling,this,t):1===n.type?e=new n.ctor(a,n.name,n.strings,this,t):6===n.type&&(e=new at(a,this,t)),this._$AV.push(e),n=i[++o]}r!==n?.index&&(a=F.nextNode(),r++)}return F.currentNode=O,s}p(t){let e=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(t,i,e),e+=i.strings.length-2):i._$AI(t[e])),e++}}class X{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,e,i,s){this.type=2,this._$AH=V,this._$AN=void 0,this._$AA=t,this._$AB=e,this._$AM=i,this.options=s,this._$Cv=s?.isConnected??!0}get parentNode(){let t=this._$AA.parentNode;const e=this._$AM;return void 0!==e&&11===t?.nodeType&&(t=e.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,e=this){t=G(this,t,e),M(t)?t===V||null==t||""===t?(this._$AH!==V&&this._$AR(),this._$AH=V):t!==this._$AH&&t!==B&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):(t=>I(t)||"function"==typeof t?.[Symbol.iterator])(t)?this.k(t):this._(t)}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t))}_(t){this._$AH!==V&&M(this._$AH)?this._$AA.nextSibling.data=t:this.T(O.createTextNode(t)),this._$AH=t}$(t){const{values:e,_$litType$:i}=t,s="number"==typeof i?this._$AC(t):(void 0===i.el&&(i.el=Z.createElement(K(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===s)this._$AH.p(e);else{const t=new Q(s,this),i=t.u(this.options);t.p(e),this.T(i),this._$AH=t}}_$AC(t){let e=Y.get(t.strings);return void 0===e&&Y.set(t.strings,e=new Z(t)),e}k(t){I(this._$AH)||(this._$AH=[],this._$AR());const e=this._$AH;let i,s=0;for(const a of t)s===e.length?e.push(i=new X(this.O(U()),this.O(U()),this,this.options)):i=e[s],i._$AI(a),s++;s<e.length&&(this._$AR(i&&i._$AB.nextSibling,s),e.length=s)}_$AR(t=this._$AA.nextSibling,e){for(this._$AP?.(!1,!0,e);t!==this._$AB;){const e=A(t).nextSibling;A(t).remove(),t=e}}setConnected(t){void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t))}}class tt{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,e,i,s,a){this.type=1,this._$AH=V,this._$AN=void 0,this.element=t,this.name=e,this._$AM=s,this.options=a,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=V}_$AI(t,e=this,i,s){const a=this.strings;let r=!1;if(void 0===a)t=G(this,t,e,0),r=!M(t)||t!==this._$AH&&t!==B,r&&(this._$AH=t);else{const s=t;let o,n;for(t=a[0],o=0;o<a.length-1;o++)n=G(this,s[i+o],e,o),n===B&&(n=this._$AH[o]),r||=!M(n)||n!==this._$AH[o],n===V?t=V:t!==V&&(t+=(n??"")+a[o+1]),this._$AH[o]=n}r&&!s&&this.j(t)}j(t){t===V?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"")}}class et extends tt{constructor(){super(...arguments),this.type=3}j(t){this.element[this.name]=t===V?void 0:t}}class it extends tt{constructor(){super(...arguments),this.type=4}j(t){this.element.toggleAttribute(this.name,!!t&&t!==V)}}class st extends tt{constructor(t,e,i,s,a){super(t,e,i,s,a),this.type=5}_$AI(t,e=this){if((t=G(this,t,e,0)??V)===B)return;const i=this._$AH,s=t===V&&i!==V||t.capture!==i.capture||t.once!==i.once||t.passive!==i.passive,a=t!==V&&(i===V||s);s&&this.element.removeEventListener(this.name,this,i),a&&this.element.addEventListener(this.name,this,t),this._$AH=t}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t)}}class at{constructor(t,e,i){this.element=t,this.type=6,this._$AN=void 0,this._$AM=e,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(t){G(this,t)}}const rt=x.litHtmlPolyfillSupport;rt?.(Z,X),(x.litHtmlVersions??=[]).push("3.3.2");const ot=globalThis;class nt extends b{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){const t=super.createRenderRoot();return this.renderOptions.renderBefore??=t.firstChild,t}update(t){const e=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=((t,e,i)=>{const s=i?.renderBefore??e;let a=s._$litPart$;if(void 0===a){const t=i?.renderBefore??null;s._$litPart$=a=new X(e.insertBefore(U(),t),t,void 0,i??{})}return a._$AI(t),a})(e,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return B}}nt._$litElement$=!0,nt.finalized=!0,ot.litElementHydrateSupport?.({LitElement:nt});const ct=ot.litElementPolyfillSupport;ct?.({LitElement:nt}),(ot.litElementVersions??=[]).push("4.2.2");const lt=t=>(e,i)=>{void 0!==i?i.addInitializer(()=>{customElements.define(t,e)}):customElements.define(t,e)},dt={attribute:!0,type:String,converter:v,reflect:!1,hasChanged:_},ht=(t=dt,e,i)=>{const{kind:s,metadata:a}=i;let r=globalThis.litPropertyMetadata.get(a);if(void 0===r&&globalThis.litPropertyMetadata.set(a,r=new Map),"setter"===s&&((t=Object.create(t)).wrapped=!0),r.set(i.name,t),"accessor"===s){const{name:s}=i;return{set(i){const a=e.get.call(this);e.set.call(this,i),this.requestUpdate(s,a,t,!0,i)},init(e){return void 0!==e&&this.C(s,void 0,t,e),e}}}if("setter"===s){const{name:s}=i;return function(i){const a=this[s];e.call(this,i),this.requestUpdate(s,a,t,!0,i)}}throw Error("Unsupported decorator location: "+s)};function pt(t){return(e,i)=>"object"==typeof i?ht(t,e,i):((t,e,i)=>{const s=e.hasOwnProperty(i);return e.constructor.createProperty(i,t),s?Object.getOwnPropertyDescriptor(e,i):void 0})(t,e,i)}function ut(t){return pt({...t,state:!0,attribute:!1})}const gt="whats_due";class mt{constructor(t){this.hass=t}getAll(){return this.hass.callWS({type:`${gt}/get_all`})}addItem(t){return this.hass.callWS({type:`${gt}/add_item`,...yt(t)})}updateItem(t,e){return this.hass.callWS({type:`${gt}/update_item`,item_id:t,...yt(e)})}deleteItem(t){return this.hass.callWS({type:`${gt}/delete_item`,item_id:t})}markDone(t){return this.hass.callWS({type:`${gt}/mark_done`,item_id:t})}addCategory(t){return this.hass.callWS({type:`${gt}/add_category`,...yt(t)})}updateCategory(t,e){return this.hass.callWS({type:`${gt}/update_category`,category_id:t,...yt(e)})}deleteCategory(t){return this.hass.callWS({type:`${gt}/delete_category`,category_id:t})}updateSettings(t){return this.hass.callWS({type:`${gt}/update_settings`,...yt(t)})}}function yt(t){const e={};for(const[i,s]of Object.entries(t))void 0!==s&&(e[i]=s);return e}const $t={title:"What's Due",add:"Add",addItem:"Add item",editItem:"Edit item",deleteItem:"Delete",markDone:"Mark done",all:"All",categories:"Categories",settings:"Settings",empty:"Nothing here yet. Tap + to add your first item.",name:"Name",dueDate:"Due date",category:"Category",icon:"Icon",notes:"Notes",recurrence:"Recurrence",recurrenceDays:"Every N days",recurrenceNone:"Does not repeat",recurrenceMonthly:"Monthly",recurrenceYearly:"Yearly",recurrenceCustom:"Custom (days)",save:"Save",cancel:"Cancel",close:"Close",daysLeft:"days left",daysOverdue:"days overdue",dueToday:"Due today",dueTomorrow:"Due tomorrow",searchPlaceholder:"Search…",confirmDelete:"Delete this item?",confirmDeleteCategory:"Delete this category? Items in it will move to 'Other'.",newCategory:"New category",color:"Color",warningDays:"Warning threshold (days)",urgentDays:"Urgent threshold (days)",criticalDays:"Critical threshold (days)",statusOk:"OK",statusWarning:"Upcoming",statusUrgent:"Soon",statusCritical:"Very soon",statusExpired:"Expired"},ft={title:"Scadențe",add:"Adaugă",addItem:"Adaugă scadență",editItem:"Editează",deleteItem:"Șterge",markDone:"Marchează ca făcut",all:"Toate",categories:"Categorii",settings:"Setări",empty:"Nimic încă. Apasă + pentru a adăuga primul element.",name:"Nume",dueDate:"Data scadenței",category:"Categorie",icon:"Iconiță",notes:"Notițe",recurrence:"Recurență",recurrenceDays:"La fiecare N zile",recurrenceNone:"Nu se repetă",recurrenceMonthly:"Lunar",recurrenceYearly:"Anual",recurrenceCustom:"Personalizat (zile)",save:"Salvează",cancel:"Anulează",close:"Închide",daysLeft:"zile rămase",daysOverdue:"zile întârziere",dueToday:"Astăzi",dueTomorrow:"Mâine",searchPlaceholder:"Caută…",confirmDelete:"Ștergi acest element?",confirmDeleteCategory:"Ștergi această categorie? Elementele vor fi mutate la 'Altele'.",newCategory:"Categorie nouă",color:"Culoare",warningDays:"Prag atenționare (zile)",urgentDays:"Prag urgent (zile)",criticalDays:"Prag critic (zile)",statusOk:"OK",statusWarning:"În curând",statusUrgent:"Aproape",statusCritical:"Foarte aproape",statusExpired:"Expirat"};const vt=o`
+  .wd-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .wd-row > * { flex: 1; }
+  .wd-row > .wd-shrink { flex: 0 0 auto; }
+
+  .wd-form {
+    display: grid;
+    gap: 12px;
+    padding: 4px 0;
+  }
+
+  .wd-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .wd-list {
+    display: flex;
+    flex-direction: column;
+  }
+`;let _t=class extends nt{constructor(){super(...arguments),this.label="",this.value="",this._onChange=t=>{this._emit(t.detail.value)}}render(){return t="ha-icon-picker",void 0!==customElements.get(t)?q`
+        <ha-icon-picker
+          .label=${this.label}
+          .value=${this.value}
+          @value-changed=${this._onChange}
+        ></ha-icon-picker>
+      `:q`
+      <ha-textfield
+        .label=${this.label}
+        .value=${this.value}
+        @input=${t=>{const e=t.target.value;this._emit(e)}}
+      ></ha-textfield>
+      ${this.value?q`<ha-icon .icon=${this.value}></ha-icon>`:V}
+    `;var t}_emit(t){this.value=t,this.dispatchEvent(new CustomEvent("value-changed",{detail:{value:t},bubbles:!0,composed:!0}))}};function wt(t){return{id:t.id,name:t.name,due_date:t.due_date,category_id:t.category_id,icon:t.icon,notes:t.notes??"",recurrence:t.recurrence,recurrence_days:t.recurrence_days??null}}function bt(t){const e=new Date;return{name:"",due_date:`${e.getFullYear()}-${String(e.getMonth()+1).padStart(2,"0")}-${String(e.getDate()).padStart(2,"0")}`,category_id:t,icon:"mdi:calendar",notes:"",recurrence:"none",recurrence_days:null}}_t.styles=o`
+    :host { display: block; }
+    ha-icon-picker, ha-textfield { width: 100%; }
+  `,t([pt()],_t.prototype,"label",void 0),t([pt()],_t.prototype,"value",void 0),_t=t([lt("wd-icon-picker")],_t);let xt=class extends nt{constructor(){super(...arguments),this.categories=[],this._cancel=()=>{this.dispatchEvent(new CustomEvent("cancel"))},this._save=()=>{this._local.name.trim()&&this._local.due_date&&this.dispatchEvent(new CustomEvent("save",{detail:this._local}))}}willUpdate(t){t.has("draft")&&this.draft&&(this._local={...this.draft})}_patch(t,e){this._local={...this._local,[t]:e},this.requestUpdate()}render(){if(!this._local)return V;const t=this.strings,e=this._local;return q`
+      <ha-dialog
+        open
+        heading=${e.id?t.editItem:t.addItem}
+        @closed=${this._cancel}
+      >
+        <div class="wd-form">
+          <ha-textfield
+            .label=${t.name}
+            .value=${e.name}
+            required
+            @input=${t=>this._patch("name",t.target.value)}
+          ></ha-textfield>
+
+          <ha-textfield
+            .label=${t.dueDate}
+            type="date"
+            .value=${e.due_date}
+            required
+            @input=${t=>this._patch("due_date",t.target.value)}
+          ></ha-textfield>
+
+          <ha-select
+            .label=${t.category}
+            .value=${e.category_id}
+            fixedMenuPosition
+            @selected=${t=>{const e=t.target.value;e&&this._patch("category_id",e)}}
+            @closed=${t=>t.stopPropagation()}
+          >
+            ${this.categories.map(t=>q`
+                <mwc-list-item .value=${t.id} graphic="icon">
+                  <ha-icon slot="graphic" .icon=${t.icon}></ha-icon>
+                  ${t.name}
+                </mwc-list-item>
+              `)}
+          </ha-select>
+
+          <wd-icon-picker
+            .label=${t.icon}
+            .value=${e.icon}
+            @value-changed=${t=>this._patch("icon",t.detail.value)}
+          ></wd-icon-picker>
+
+          <ha-select
+            .label=${t.recurrence}
+            .value=${e.recurrence}
+            fixedMenuPosition
+            @selected=${t=>{const e=t.target.value;e&&this._patch("recurrence",e)}}
+            @closed=${t=>t.stopPropagation()}
+          >
+            <mwc-list-item value="none">${t.recurrenceNone}</mwc-list-item>
+            <mwc-list-item value="monthly">${t.recurrenceMonthly}</mwc-list-item>
+            <mwc-list-item value="yearly">${t.recurrenceYearly}</mwc-list-item>
+            <mwc-list-item value="custom">${t.recurrenceCustom}</mwc-list-item>
+          </ha-select>
+
+          ${"custom"===e.recurrence?q`
+                <ha-textfield
+                  .label=${t.recurrenceDays}
+                  type="number"
+                  min="1"
+                  .value=${null!=e.recurrence_days?String(e.recurrence_days):""}
+                  @input=${t=>{const e=t.target.value;this._patch("recurrence_days",e?parseInt(e,10):null)}}
+                ></ha-textfield>
+              `:V}
+
+          <ha-textarea
+            .label=${t.notes}
+            .value=${e.notes}
+            @input=${t=>this._patch("notes",t.target.value)}
+          ></ha-textarea>
+        </div>
+
+        <mwc-button slot="secondaryAction" @click=${this._cancel}>
+          ${t.cancel}
+        </mwc-button>
+        <mwc-button slot="primaryAction" @click=${this._save}>
+          ${t.save}
+        </mwc-button>
+      </ha-dialog>
+    `}};function At(t){return{id:t.id,name:t.name,icon:t.icon,color:t.color}}xt.styles=vt,t([pt({attribute:!1})],xt.prototype,"strings",void 0),t([pt({attribute:!1})],xt.prototype,"categories",void 0),t([pt({attribute:!1})],xt.prototype,"draft",void 0),t([ut()],xt.prototype,"_local",void 0),xt=t([lt("wd-item-dialog")],xt);let Ct=class extends nt{constructor(){super(...arguments),this._cancel=()=>this.dispatchEvent(new CustomEvent("cancel")),this._save=()=>{this._local.name.trim()&&this.dispatchEvent(new CustomEvent("save",{detail:this._local}))}}willUpdate(t){t.has("draft")&&this.draft&&(this._local={...this.draft})}_patch(t,e){this._local={...this._local,[t]:e},this.requestUpdate()}render(){if(!this._local)return V;const t=this.strings,e=this._local;return q`
+      <ha-dialog
+        open
+        heading=${e.id?t.categories:t.newCategory}
+        @closed=${this._cancel}
+      >
+        <div class="form">
+          <ha-textfield
+            .label=${t.name}
+            .value=${e.name}
+            required
+            @input=${t=>this._patch("name",t.target.value)}
+          ></ha-textfield>
+
+          <wd-icon-picker
+            .label=${t.icon}
+            .value=${e.icon}
+            @value-changed=${t=>this._patch("icon",t.detail.value)}
+          ></wd-icon-picker>
+
+          <div class="color-row">
+            <input
+              type="color"
+              .value=${e.color}
+              @input=${t=>this._patch("color",t.target.value)}
+            />
+            <span class="color-label">${t.color}</span>
+          </div>
+        </div>
+
+        <mwc-button slot="secondaryAction" @click=${this._cancel}>
+          ${t.cancel}
+        </mwc-button>
+        <mwc-button slot="primaryAction" @click=${this._save}>
+          ${t.save}
+        </mwc-button>
+      </ha-dialog>
+    `}};Ct.styles=o`
+    .form { display: grid; gap: 12px; padding: 4px 0; }
+    .color-row { display: flex; gap: 10px; align-items: center; }
+    .color-row input[type="color"] {
+      padding: 0;
+      border: 1px solid var(--divider-color);
+      border-radius: 8px;
+      width: 48px;
+      height: 36px;
+      background: transparent;
+      cursor: pointer;
+    }
+    .color-label { color: var(--secondary-text-color); font-size: 0.85rem; }
+  `,t([pt({attribute:!1})],Ct.prototype,"strings",void 0),t([pt({attribute:!1})],Ct.prototype,"draft",void 0),t([ut()],Ct.prototype,"_local",void 0),Ct=t([lt("wd-category-dialog")],Ct);let Et=class extends nt{constructor(){super(...arguments),this.categories=[],this._close=()=>this.dispatchEvent(new CustomEvent("close")),this._add=()=>this.dispatchEvent(new CustomEvent("add"))}_edit(t){this.dispatchEvent(new CustomEvent("edit",{detail:t}))}_delete(t){this.dispatchEvent(new CustomEvent("delete",{detail:t}))}render(){const t=this.strings;return q`
+      <ha-dialog open heading=${t.categories} @closed=${this._close}>
+        <div class="list">
+          ${0===this.categories.length?q`<div class="empty">—</div>`:this.categories.map(e=>q`
+                  <div class="row">
+                    <div class="swatch" style="background: ${e.color}">
+                      <ha-icon .icon=${e.icon}></ha-icon>
+                    </div>
+                    <div class="name">
+                      <div>${e.name}</div>
+                      <div class="muted">${e.id}</div>
+                    </div>
+                    <ha-icon-button
+                      .label=${t.editItem}
+                      @click=${()=>this._edit(e)}
+                    >
+                      <ha-icon icon="mdi:pencil"></ha-icon>
+                    </ha-icon-button>
+                    <ha-icon-button
+                      .label=${t.deleteItem}
+                      @click=${()=>this._delete(e)}
+                    >
+                      <ha-icon icon="mdi:delete"></ha-icon>
+                    </ha-icon-button>
+                  </div>
+                `)}
+        </div>
+
+        <mwc-button slot="secondaryAction" @click=${this._close}>
+          ${t.close}
+        </mwc-button>
+        <mwc-button slot="primaryAction" @click=${this._add}>
+          <ha-icon icon="mdi:plus" slot="icon"></ha-icon>
+          ${t.newCategory}
+        </mwc-button>
+      </ha-dialog>
+    `}};Et.styles=o`
+    .list { display: flex; flex-direction: column; }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 4px;
+      border-bottom: 1px solid var(--divider-color);
+    }
+    .row:last-child { border-bottom: 0; }
+    .swatch {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .name { flex: 1; }
+    .muted { color: var(--secondary-text-color); font-size: 0.85rem; }
+    .empty { padding: 20px 4px; color: var(--secondary-text-color); text-align: center; }
+  `,t([pt({attribute:!1})],Et.prototype,"strings",void 0),t([pt({attribute:!1})],Et.prototype,"categories",void 0),Et=t([lt("wd-categories-dialog")],Et);let St=class extends nt{constructor(){super(...arguments),this._cancel=()=>this.dispatchEvent(new CustomEvent("cancel")),this._save=()=>{this.dispatchEvent(new CustomEvent("save",{detail:this._local}))}}willUpdate(t){t.has("settings")&&this.settings&&(this._local={...this.settings})}_patch(t,e){this._local={...this._local,[t]:e},this.requestUpdate()}_num(t){const e=parseInt(t.target.value,10);return Number.isFinite(e)&&e>=0?e:0}render(){if(!this._local)return V;const t=this.strings,e=this._local;return q`
+      <ha-dialog open heading=${t.settings} @closed=${this._cancel}>
+        <div class="form">
+          <p class="hint">
+            ${t.warningDays} &gt; ${t.urgentDays} &gt; ${t.criticalDays}
+          </p>
+          <ha-textfield
+            .label=${t.warningDays}
+            type="number"
+            min="1"
+            .value=${String(e.warning_days)}
+            @input=${t=>this._patch("warning_days",this._num(t))}
+          ></ha-textfield>
+          <ha-textfield
+            .label=${t.urgentDays}
+            type="number"
+            min="1"
+            .value=${String(e.urgent_days)}
+            @input=${t=>this._patch("urgent_days",this._num(t))}
+          ></ha-textfield>
+          <ha-textfield
+            .label=${t.criticalDays}
+            type="number"
+            min="0"
+            .value=${String(e.critical_days)}
+            @input=${t=>this._patch("critical_days",this._num(t))}
+          ></ha-textfield>
+        </div>
+
+        <mwc-button slot="secondaryAction" @click=${this._cancel}>
+          ${t.cancel}
+        </mwc-button>
+        <mwc-button slot="primaryAction" @click=${this._save}>
+          ${t.save}
+        </mwc-button>
+      </ha-dialog>
+    `}};St.styles=o`
+    .form { display: grid; gap: 12px; padding: 4px 0; min-width: 280px; }
+    .hint {
+      font-size: 0.85rem;
+      color: var(--secondary-text-color);
+      line-height: 1.4;
+    }
+  `,t([pt({attribute:!1})],St.prototype,"strings",void 0),t([pt({attribute:!1})],St.prototype,"settings",void 0),t([ut()],St.prototype,"_local",void 0),St=t([lt("wd-settings-dialog")],St);let kt=class extends nt{constructor(){super(...arguments),this.narrow=!1,this.items=[],this.categories=[],this.settings={warning_days:30,urgent_days:7,critical_days:1},this.activeCategory="all",this.search="",this.dialog=null,this.loaded=!1,this.openAddItem=()=>{const t=this.categories[0]?.id??"other";this.dialog={kind:"item",draft:bt(t)}},this.openCategories=()=>{this.dialog={kind:"categories"}},this.openAddCategory=()=>{this.dialog={kind:"category",draft:{name:"",icon:"mdi:tag",color:"#78909C"}}},this.openSettings=()=>{this.dialog={kind:"settings"}},this.closeDialog=()=>{this.dialog=null},this._onMenuAction=t=>{0===t.detail.index?this.openCategories():1===t.detail.index&&this.openSettings()}}connectedCallback(){super.connectedCallback(),this.api=new mt(this.hass),this.refresh()}get strings(){return t=this.hass?.language,t&&t.toLowerCase().startsWith("ro")?ft:$t;var t}async refresh(){const t=await this.api.getAll();this.items=t.items,this.categories=t.categories,this.settings=t.settings,this.loaded=!0}getCategory(t){return this.categories.find(e=>e.id===t)}filteredItems(){const t=this.search.trim().toLowerCase();return this.items.filter(t=>"all"===this.activeCategory||t.category_id===this.activeCategory).filter(e=>!t||e.name.toLowerCase().includes(t)||(e.notes||"").toLowerCase().includes(t)).sort((t,e)=>t.days_until_due-e.days_until_due)}openEditItem(t){this.dialog={kind:"item",draft:wt(t)}}async deleteItem(t){confirm(this.strings.confirmDelete)&&(await this.api.deleteItem(t.id),await this.refresh())}async markDone(t){await this.api.markDone(t.id),await this.refresh()}async saveItem(t){const e={name:t.name.trim(),due_date:t.due_date,category_id:t.category_id,icon:t.icon||"mdi:calendar",notes:t.notes,recurrence:t.recurrence,recurrence_days:"custom"===t.recurrence?t.recurrence_days??void 0:void 0};t.id?await this.api.updateItem(t.id,e):await this.api.addItem(e),this.dialog=null,await this.refresh()}openEditCategory(t){this.dialog={kind:"category",draft:At(t)}}async deleteCategory(t){confirm(this.strings.confirmDeleteCategory)&&(await this.api.deleteCategory(t.id),await this.refresh(),this.activeCategory===t.id&&(this.activeCategory="all"))}async saveCategory(t){t.id?await this.api.updateCategory(t.id,{name:t.name.trim(),icon:t.icon,color:t.color}):await this.api.addCategory({name:t.name.trim(),icon:t.icon,color:t.color}),await this.refresh(),this.dialog={kind:"categories"}}async saveSettings(t){await this.api.updateSettings(t),this.dialog=null,await this.refresh()}formatDays(t){const e=t.days_until_due,i=this.strings;return e<0?`${Math.abs(e)} ${i.daysOverdue}`:0===e?i.dueToday:1===e?i.dueTomorrow:`${e} ${i.daysLeft}`}render(){const t=this.strings,e=this.filteredItems();return q`
+      <div class="app">
+        <header class="bar">
+          <h1>${t.title}</h1>
+          <ha-button-menu
+            corner="BOTTOM_END"
+            menuCorner="END"
+            @action=${this._onMenuAction}
+          >
+            <ha-icon-button slot="trigger" .label=${"menu"}>
+              <ha-icon icon="mdi:dots-vertical"></ha-icon>
+            </ha-icon-button>
+            <mwc-list-item graphic="icon">
+              <ha-icon slot="graphic" icon="mdi:tag-multiple"></ha-icon>
+              ${t.categories}
+            </mwc-list-item>
+            <mwc-list-item graphic="icon">
+              <ha-icon slot="graphic" icon="mdi:cog"></ha-icon>
+              ${t.settings}
+            </mwc-list-item>
+          </ha-button-menu>
+        </header>
+
+        <div class="chips">
+          <button
+            class="chip ${"all"===this.activeCategory?"active":""}"
+            @click=${()=>this.activeCategory="all"}
+          >
+            <ha-icon icon="mdi:view-grid"></ha-icon>
+            <span>${t.all}</span>
+          </button>
+          ${this.categories.map(t=>q`
+              <button
+                class="chip ${this.activeCategory===t.id?"active":""}"
+                @click=${()=>this.activeCategory=t.id}
+              >
+                <ha-icon .icon=${t.icon}></ha-icon>
+                <span>${t.name}</span>
+              </button>
+            `)}
+        </div>
+
+        <div class="search">
+          <ha-textfield
+            class="search-field"
+            icon
+            .placeholder=${t.searchPlaceholder}
+            .value=${this.search}
+            @input=${t=>this.search=t.target.value}
+          >
+            <ha-icon slot="leadingIcon" icon="mdi:magnify"></ha-icon>
+          </ha-textfield>
+        </div>
+
+        <div class="grid">
+          ${this.loaded?0===e.length?q`<div class="empty">${t.empty}</div>`:e.map(t=>this._renderCard(t)):V}
+        </div>
+
+        <ha-fab
+          .label=${t.addItem}
+          extended
+          @click=${this.openAddItem}
+        >
+          <ha-icon slot="icon" icon="mdi:plus"></ha-icon>
+          ${t.addItem}
+        </ha-fab>
+
+        ${this._renderDialog()}
+      </div>
+    `}_renderCard(t){const e=this.getCategory(t.category_id),i=this.strings;return q`
+      <ha-card class="status-${t.status}">
+        <div class="icon-wrap" style="background: ${e?.color??"#78909C"}">
+          <ha-icon .icon=${t.icon}></ha-icon>
+        </div>
+        <div class="body">
+          <h3>${t.name}</h3>
+          <div class="meta">
+            <span>${e?.name??"—"}</span>
+            <span>${t.due_date}</span>
+          </div>
+          <div class="days">${this.formatDays(t)}</div>
+        </div>
+        <div class="actions">
+          <ha-icon-button
+            .label=${i.markDone}
+            @click=${()=>this.markDone(t)}
+          >
+            <ha-icon icon="mdi:check"></ha-icon>
+          </ha-icon-button>
+          <ha-icon-button
+            .label=${i.editItem}
+            @click=${()=>this.openEditItem(t)}
+          >
+            <ha-icon icon="mdi:pencil"></ha-icon>
+          </ha-icon-button>
+          <ha-icon-button
+            .label=${i.deleteItem}
+            @click=${()=>this.deleteItem(t)}
+          >
+            <ha-icon icon="mdi:delete"></ha-icon>
+          </ha-icon-button>
+        </div>
+      </ha-card>
+    `}_renderDialog(){if(!this.dialog)return V;const t=this.strings;return"item"===this.dialog.kind?q`
+        <wd-item-dialog
+          .strings=${t}
+          .categories=${this.categories}
+          .draft=${this.dialog.draft}
+          @save=${t=>this.saveItem(t.detail)}
+          @cancel=${this.closeDialog}
+        ></wd-item-dialog>
+      `:"categories"===this.dialog.kind?q`
+        <wd-categories-dialog
+          .strings=${t}
+          .categories=${this.categories}
+          @close=${this.closeDialog}
+          @add=${this.openAddCategory}
+          @edit=${t=>this.openEditCategory(t.detail)}
+          @delete=${t=>this.deleteCategory(t.detail)}
+        ></wd-categories-dialog>
+      `:"category"===this.dialog.kind?q`
+        <wd-category-dialog
+          .strings=${t}
+          .draft=${this.dialog.draft}
+          @save=${t=>this.saveCategory(t.detail)}
+          @cancel=${()=>this.dialog={kind:"categories"}}
+        ></wd-category-dialog>
+      `:"settings"===this.dialog.kind?q`
+        <wd-settings-dialog
+          .strings=${t}
+          .settings=${this.settings}
+          @save=${t=>this.saveSettings(t.detail)}
+          @cancel=${this.closeDialog}
+        ></wd-settings-dialog>
+      `:V}};kt.styles=o`
+    :host {
+      display: block;
+      height: 100vh;
+      background: var(--primary-background-color);
+      color: var(--primary-text-color);
+      font-family: var(--paper-font-body1_-_font-family, Roboto, sans-serif);
+      --wd-status-ok: var(--success-color, #4caf50);
+      --wd-status-warning: #ffc107;
+      --wd-status-urgent: #ff9800;
+      --wd-status-critical: #f44336;
+      --wd-status-expired: #b71c1c;
+    }
+
+    .app {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    header.bar {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 10px 12px;
+      background: var(--app-header-background-color, var(--primary-color));
+      color: var(--app-header-text-color, #fff);
+      box-shadow: var(--ha-card-box-shadow, 0 2px 4px rgba(0, 0, 0, 0.1));
+      --mdc-icon-button-size: 40px;
+    }
+    header.bar h1 {
+      margin: 0 8px;
+      font-size: 1.2rem;
+      font-weight: 500;
+      flex: 1;
+    }
+
+    .chips {
+      display: flex;
+      gap: 8px;
+      padding: 10px 16px;
+      overflow-x: auto;
+      scrollbar-width: thin;
+      border-bottom: 1px solid var(--divider-color);
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--secondary-background-color);
+      border: 1px solid var(--divider-color);
+      cursor: pointer;
+      white-space: nowrap;
+      font-size: 0.85rem;
+      color: var(--primary-text-color);
+      transition: transform 120ms ease;
+    }
+    .chip:hover { transform: translateY(-1px); }
+    .chip.active {
+      background: var(--primary-color);
+      color: var(--text-primary-color, #fff);
+      border-color: transparent;
+    }
+    .chip ha-icon { --mdc-icon-size: 18px; }
+
+    .search {
+      padding: 10px 16px 4px;
+    }
+
+    .grid {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 16px 96px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 12px;
+      align-content: start;
+    }
+
+    ha-card {
+      position: relative;
+      padding: 14px 16px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      border-left: 4px solid transparent;
+      transition: transform 120ms ease;
+    }
+    ha-card:hover { transform: translateY(-1px); }
+    ha-card.status-ok { border-left-color: var(--wd-status-ok); }
+    ha-card.status-warning { border-left-color: var(--wd-status-warning); }
+    ha-card.status-urgent { border-left-color: var(--wd-status-urgent); }
+    ha-card.status-critical { border-left-color: var(--wd-status-critical); }
+    ha-card.status-expired { border-left-color: var(--wd-status-expired); }
+
+    .icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #fff;
+    }
+    .icon-wrap ha-icon { --mdc-icon-size: 24px; }
+
+    .body { flex: 1; min-width: 0; }
+    .body h3 {
+      margin: 0 0 2px;
+      font-size: 1rem;
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .meta {
+      font-size: 0.8rem;
+      color: var(--secondary-text-color);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .days {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+    .status-expired .days,
+    .status-critical .days { color: var(--wd-status-critical); }
+    .status-urgent .days { color: var(--wd-status-urgent); }
+    .status-warning .days { color: var(--wd-status-warning); }
+    .status-ok .days { color: var(--wd-status-ok); }
+
+    .actions {
+      display: flex;
+      gap: 2px;
+      margin-left: auto;
+      --mdc-icon-button-size: 36px;
+      --mdc-icon-size: 20px;
+    }
+
+    .empty {
+      grid-column: 1 / -1;
+      padding: 40px 16px;
+      text-align: center;
+      color: var(--secondary-text-color);
+    }
+
+    ha-fab {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 10;
+    }
+
+    ha-textfield.search-field { width: 100%; }
+  `,t([pt({attribute:!1})],kt.prototype,"hass",void 0),t([pt({attribute:!1})],kt.prototype,"narrow",void 0),t([pt({attribute:!1})],kt.prototype,"route",void 0),t([pt({attribute:!1})],kt.prototype,"panel",void 0),t([ut()],kt.prototype,"items",void 0),t([ut()],kt.prototype,"categories",void 0),t([ut()],kt.prototype,"settings",void 0),t([ut()],kt.prototype,"activeCategory",void 0),t([ut()],kt.prototype,"search",void 0),t([ut()],kt.prototype,"dialog",void 0),t([ut()],kt.prototype,"loaded",void 0),kt=t([lt("whats-due-panel")],kt);export{kt as WhatsDuePanel};

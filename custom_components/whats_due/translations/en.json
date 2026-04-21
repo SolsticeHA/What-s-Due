@@ -1,0 +1,14 @@
+{
+  "title": "What's Due",
+  "config": {
+    "step": {
+      "user": {
+        "title": "What's Due",
+        "description": "This will add What's Due to your sidebar. You can manage items and categories from there."
+      }
+    },
+    "abort": {
+      "already_configured": "What's Due is already configured."
+    }
+  }
+}

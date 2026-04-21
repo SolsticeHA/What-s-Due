@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build frontend bundle
+        run: npm run build
+
+      - name: Sync manifest version with tag
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          python - <<EOF
+          import json, pathlib
+          p = pathlib.Path("custom_components/whats_due/manifest.json")
+          m = json.loads(p.read_text())
+          m["version"] = "$VERSION"
+          p.write_text(json.dumps(m, indent=2) + "\n")
+          EOF
+
+      - name: Package integration
+        run: |
+          cd custom_components/whats_due
+          zip -r ../../whats_due.zip .
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: whats_due.zip
+          generate_release_notes: true

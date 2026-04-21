@@ -1,0 +1,14 @@
+{
+  "title": "Scadențe",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Scadențe",
+        "description": "Integrarea va adăuga Scadențe în bara laterală. De acolo poți gestiona elementele și categoriile."
+      }
+    },
+    "abort": {
+      "already_configured": "Integrarea este deja configurată."
+    }
+  }
+}
