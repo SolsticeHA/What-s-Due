@@ -59,6 +59,9 @@ export interface HomeAssistant {
       eventType: string
     ): Promise<() => void>;
   };
+  // HA keeps services keyed by domain → service name → metadata. We only
+  // read keys under "notify" so the value type can stay loose.
+  services?: Record<string, Record<string, unknown>>;
   localize?: (key: string) => string;
   language?: string;
 }

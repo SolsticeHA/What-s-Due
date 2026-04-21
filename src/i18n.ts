@@ -42,16 +42,18 @@ const EN = {
   urgentDays: "Urgent threshold (days)",
   criticalDays: "Critical threshold (days)",
   statusOk: "OK",
-  statusWarning: "Upcoming",
-  statusUrgent: "Soon",
-  statusCritical: "Very soon",
+  statusWarning: "Warning",
+  statusUrgent: "Urgent",
+  statusCritical: "Critical",
   statusExpired: "Expired",
   statusCompleted: "Completed",
   notifications: "Notifications",
   notificationsEnabled: "Send notifications on status change",
   notificationsTargets: "Notify services",
   notificationsTargetsHint:
-    "Comma-separated list of notify targets (without the 'notify.' prefix). Example: mobile_app_phone, persistent_notification",
+    "Pick one or more notify services to receive status alerts.",
+  notificationsNoServices:
+    "No notify services found on this Home Assistant instance.",
   notificationsStatuses: "Notify on statuses",
 };
 
@@ -99,16 +101,18 @@ const RO: typeof EN = {
   urgentDays: "Prag urgent (zile)",
   criticalDays: "Prag critic (zile)",
   statusOk: "OK",
-  statusWarning: "În curând",
-  statusUrgent: "Aproape",
-  statusCritical: "Foarte aproape",
+  statusWarning: "Atenție",
+  statusUrgent: "Urgent",
+  statusCritical: "Critic",
   statusExpired: "Expirat",
   statusCompleted: "Finalizat",
   notifications: "Notificări",
   notificationsEnabled: "Trimite notificări la schimbare de status",
   notificationsTargets: "Servicii notify",
   notificationsTargetsHint:
-    "Listă separată prin virgulă, fără prefixul 'notify.'. Exemplu: mobile_app_telefon, persistent_notification",
+    "Selectează unul sau mai multe servicii notify pentru alerte de status.",
+  notificationsNoServices:
+    "Nu s-au găsit servicii notify pe această instanță Home Assistant.",
   notificationsStatuses: "Notifică pe statusurile",
 };
 

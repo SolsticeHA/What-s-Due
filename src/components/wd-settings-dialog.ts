@@ -3,7 +3,10 @@ import { customElement, property, state } from "lit/decorators.js";
 
 import { layoutStyles } from "../shared-styles.js";
 import type { Strings } from "../i18n.js";
-import type { NotificationSettings, Settings } from "../types.js";
+import type {
+  NotificationSettings,
+  Settings,
+} from "../types.js";
 
 const NOTIFY_STATUS_KEYS = ["warning", "urgent", "critical", "expired"] as const;
 type NotifyStatusKey = (typeof NOTIFY_STATUS_KEYS)[number];
@@ -43,14 +46,26 @@ export class WdSettingsDialog extends LitElement {
         grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
         gap: 8px;
       }
+      .notif-body {
+        display: grid;
+        gap: 12px;
+        padding-left: 28px;
+      }
+      .empty-note {
+        font-size: 0.85rem;
+        color: var(--secondary-text-color);
+        font-style: italic;
+      }
     `,
   ];
 
   @property({ attribute: false }) public strings!: Strings;
   @property({ attribute: false }) public settings!: Settings;
+  // List of available "notify.*" service names (without the notify. prefix),
+  // pulled from hass.services by the parent panel.
+  @property({ attribute: false }) public notifyServices: string[] = [];
 
   @state() private _local!: Settings;
-  @state() private _targetsText = "";
 
   override willUpdate(changed: Map<string, unknown>): void {
     if (changed.has("settings") && this.settings) {
@@ -62,7 +77,6 @@ export class WdSettingsDialog extends LitElement {
           statuses: [...(this.settings.notifications?.statuses ?? [])],
         },
       };
-      this._targetsText = this._local.notifications.targets.join(", ");
     }
   }
 
@@ -89,6 +103,13 @@ export class WdSettingsDialog extends LitElement {
     this._patchNotif("statuses", Array.from(current));
   }
 
+  private _toggleTarget(name: string): void {
+    const current = new Set(this._local.notifications.targets);
+    if (current.has(name)) current.delete(name);
+    else current.add(name);
+    this._patchNotif("targets", Array.from(current));
+  }
+
   private _num(e: Event): number {
     const v = parseInt((e.target as HTMLInputElement).value, 10);
     return Number.isFinite(v) && v >= 0 ? v : 0;
@@ -97,18 +118,70 @@ export class WdSettingsDialog extends LitElement {
   private _cancel = () => this.dispatchEvent(new CustomEvent("cancel"));
 
   private _save = () => {
-    // Parse the free-text targets into a clean string array on save.
-    // Strip "notify." prefix in case a user copy-pasted the full name.
-    const targets = this._targetsText
-      .split(",")
-      .map((t) => t.trim().replace(/^notify\./, ""))
-      .filter((t) => t.length > 0);
-    const payload: Settings = {
-      ...this._local,
-      notifications: { ...this._local.notifications, targets },
-    };
-    this.dispatchEvent(new CustomEvent<Settings>("save", { detail: payload }));
+    this.dispatchEvent(
+      new CustomEvent<Settings>("save", { detail: this._local })
+    );
   };
+
+  private _renderNotifBody(n: NotificationSettings) {
+    const s = this.strings;
+    const available = [...this.notifyServices].sort();
+    // Always include any pre-selected target, even if it's not currently
+    // exposed by hass.services (e.g. transient group / stale entry).
+    for (const t of n.targets) {
+      if (!available.includes(t)) available.push(t);
+    }
+
+    return html`
+      <div class="notif-body">
+        <div class="hint">${s.notificationsTargets}</div>
+        ${available.length === 0
+          ? html`<div class="empty-note">${s.notificationsNoServices}</div>`
+          : html`
+              <div class="wd-chip-group">
+                ${available.map(
+                  (name) => html`
+                    <button
+                      type="button"
+                      class="wd-chip ${n.targets.includes(name)
+                        ? "active"
+                        : ""}"
+                      @click=${() => this._toggleTarget(name)}
+                    >
+                      ${name}
+                    </button>
+                  `
+                )}
+              </div>
+              <p class="hint">${s.notificationsTargetsHint}</p>
+            `}
+
+        <div>
+          <div class="hint" style="margin-bottom: 6px;">
+            ${s.notificationsStatuses}
+          </div>
+          <div class="status-grid">
+            ${NOTIFY_STATUS_KEYS.map(
+              (key) => html`
+                <label class="toggle-row">
+                  <input
+                    type="checkbox"
+                    .checked=${n.statuses.includes(key)}
+                    @change=${(e: Event) =>
+                      this._toggleStatus(
+                        key,
+                        (e.target as HTMLInputElement).checked
+                      )}
+                  />
+                  <span>${this._statusLabel(key)}</span>
+                </label>
+              `
+            )}
+          </div>
+        </div>
+      </div>
+    `;
+  }
 
   private _statusLabel(key: NotifyStatusKey): string {
     const s = this.strings;
@@ -179,39 +252,7 @@ export class WdSettingsDialog extends LitElement {
             <span>${s.notificationsEnabled}</span>
           </label>
 
-          <ha-textfield
-            .label=${s.notificationsTargets}
-            .value=${this._targetsText}
-            .disabled=${!n.enabled}
-            @input=${(e: Event) =>
-              (this._targetsText = (e.target as HTMLInputElement).value)}
-          ></ha-textfield>
-          <p class="hint">${s.notificationsTargetsHint}</p>
-
-          <div>
-            <div class="hint" style="margin-bottom: 6px;">
-              ${s.notificationsStatuses}
-            </div>
-            <div class="status-grid">
-              ${NOTIFY_STATUS_KEYS.map(
-                (key) => html`
-                  <label class="toggle-row">
-                    <input
-                      type="checkbox"
-                      .checked=${n.statuses.includes(key)}
-                      .disabled=${!n.enabled}
-                      @change=${(e: Event) =>
-                        this._toggleStatus(
-                          key,
-                          (e.target as HTMLInputElement).checked
-                        )}
-                    />
-                    <span>${this._statusLabel(key)}</span>
-                  </label>
-                `
-              )}
-            </div>
-          </div>
+          ${n.enabled ? this._renderNotifBody(n) : nothing}
         </div>
 
         <div class="wd-dialog-actions">

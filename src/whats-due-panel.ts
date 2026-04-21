@@ -624,10 +624,14 @@ export class WhatsDuePanel extends LitElement {
     }
 
     if (this.dialog.kind === "settings") {
+      const notifyServices = Object.keys(
+        this.hass?.services?.notify ?? {}
+      );
       return html`
         <wd-settings-dialog
           .strings=${s}
           .settings=${this.settings}
+          .notifyServices=${notifyServices}
           @save=${(e: CustomEvent<Settings>) => this.saveSettings(e.detail)}
           @cancel=${this.closeDialog}
         ></wd-settings-dialog>
