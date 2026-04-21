@@ -1,0 +1,11 @@
+{
+  "reportMissingImports": "none",
+  "reportMissingModuleSource": "none",
+  "venvPath": ".",
+  "venv": ".venv",
+  "exclude": [
+    "node_modules",
+    ".venv",
+    "custom_components/whats_due/frontend"
+  ]
+}
