@@ -66,7 +66,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
-        frontend.async_remove_panel(hass, PANEL_NAME)
+        frontend.async_remove_panel(hass, DOMAIN)
         hass.data.pop(DOMAIN, None)
     return unload_ok
 
@@ -80,9 +80,18 @@ async def _async_register_panel(hass: HomeAssistant) -> None:
     """Register the custom panel and serve its static bundle."""
     panel_dir = Path(__file__).parent / "frontend"
 
-    await hass.http.async_register_static_paths(
-        [StaticPathConfig("/whats_due_panel", str(panel_dir), cache_headers=False)]
-    )
+    # Static path survives across entry reloads; only register it once per
+    # HA lifetime to avoid "path already registered" errors.
+    if not hass.data[DOMAIN].get("static_registered"):
+        await hass.http.async_register_static_paths(
+            [StaticPathConfig("/whats_due_panel", str(panel_dir), cache_headers=False)]
+        )
+        hass.data[DOMAIN]["static_registered"] = True
+
+    # If a previous entry lifecycle left the panel registered, remove it so
+    # panel_custom can re-register cleanly instead of raising "Overwriting panel".
+    if DOMAIN in hass.data.get("frontend_panels", {}):
+        frontend.async_remove_panel(hass, DOMAIN)
 
     await panel_custom.async_register_panel(
         hass=hass,
