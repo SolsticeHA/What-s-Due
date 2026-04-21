@@ -2,6 +2,7 @@ import { LitElement, html, css, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
 import { WhatsDueApi } from "./api.js";
+import { loadHaDependencies } from "./ha-elements.js";
 import { pickStrings, type Strings } from "./i18n.js";
 import type {
   Category,
@@ -212,13 +213,20 @@ export class WhatsDuePanel extends LitElement {
   @state() private search = "";
   @state() private dialog: DialogMode = null;
   @state() private loaded = false;
+  @state() private depsReady = false;
 
   private api!: WhatsDueApi;
 
   override connectedCallback(): void {
     super.connectedCallback();
     this.api = new WhatsDueApi(this.hass);
-    void this.refresh();
+    void this._bootstrap();
+  }
+
+  private async _bootstrap(): Promise<void> {
+    await loadHaDependencies();
+    this.depsReady = true;
+    await this.refresh();
   }
 
   private get strings(): Strings {
@@ -364,6 +372,16 @@ export class WhatsDuePanel extends LitElement {
 
   override render() {
     const s = this.strings;
+
+    if (!this.depsReady) {
+      return html`
+        <div class="app">
+          <header class="bar"><h1>${s.title}</h1></header>
+          <div class="empty">…</div>
+        </div>
+      `;
+    }
+
     const filtered = this.filteredItems();
 
     return html`
