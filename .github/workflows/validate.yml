@@ -6,6 +6,11 @@ on:
   schedule:
     - cron: "0 0 * * *"
 
+# Opt into Node 24 for JavaScript-based actions ahead of the Node 20
+# deprecation on GitHub-hosted runners (enforced June 2 2026).
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   hassfest:
     runs-on: ubuntu-latest

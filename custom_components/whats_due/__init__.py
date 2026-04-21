@@ -8,8 +8,9 @@ from homeassistant.components import frontend, panel_custom
 from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
-
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
+from homeassistant.helpers.typing import ConfigType
 
 from .const import (
     DOMAIN,
@@ -25,8 +26,14 @@ from .websocket_api import async_register_websocket_handlers
 
 _LOGGER = logging.getLogger(__name__)
 
+# This integration has no YAML configuration; everything runs via a
+# config entry added from the UI. Declaring this explicitly satisfies
+# hassfest's CONFIG_SCHEMA requirement for integrations that implement
+# async_setup.
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
-async def async_setup(hass: HomeAssistant, config: dict) -> bool:
+
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up the What's Due component (YAML side — unused)."""
     hass.data.setdefault(DOMAIN, {})
     return True
