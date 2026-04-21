@@ -1,8 +1,8 @@
 import { LitElement, html, css, nothing } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { property, state } from "lit/decorators.js";
 
 import { WhatsDueApi } from "./api.js";
-import { loadHaDependencies } from "./ha-elements.js";
+import { defineOnce, loadHaDependencies } from "./ha-elements.js";
 import { pickStrings, type Strings } from "./i18n.js";
 import type {
   Category,
@@ -34,7 +34,6 @@ type DialogMode =
   | { kind: "settings" }
   | null;
 
-@customElement("whats-due-panel")
 export class WhatsDuePanel extends LitElement {
   static override styles = css`
     :host {
@@ -641,6 +640,8 @@ export class WhatsDuePanel extends LitElement {
     return nothing;
   }
 }
+
+defineOnce("whats-due-panel", WhatsDuePanel);
 
 declare global {
   interface HTMLElementTagNameMap {

@@ -28,6 +28,21 @@ export function hasHaComponent(tag: string): boolean {
   return customElements.get(tag) !== undefined;
 }
 
+/**
+ * Register a custom element tag, but only the first time. HA sometimes
+ * re-loads the same panel module across navigations; the standard
+ * `@customElement` decorator throws 'has already been used' on the
+ * second load, which aborts the rest of the module and breaks the UI.
+ */
+export function defineOnce(
+  tag: string,
+  klass: CustomElementConstructor
+): void {
+  if (!customElements.get(tag)) {
+    customElements.define(tag, klass);
+  }
+}
+
 export async function loadHaDependencies(
   timeoutMs = 5000
 ): Promise<void> {

@@ -1,6 +1,7 @@
 import { LitElement, html, css, nothing } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { property, state } from "lit/decorators.js";
 
+import { defineOnce } from "../ha-elements.js";
 import { layoutStyles } from "../shared-styles.js";
 import type { Strings } from "../i18n.js";
 import type {
@@ -11,7 +12,6 @@ import type {
 const NOTIFY_STATUS_KEYS = ["warning", "urgent", "critical", "expired"] as const;
 type NotifyStatusKey = (typeof NOTIFY_STATUS_KEYS)[number];
 
-@customElement("wd-settings-dialog")
 export class WdSettingsDialog extends LitElement {
   static override styles = [
     layoutStyles,
@@ -263,6 +263,8 @@ export class WdSettingsDialog extends LitElement {
     `;
   }
 }
+
+defineOnce("wd-settings-dialog", WdSettingsDialog);
 
 declare global {
   interface HTMLElementTagNameMap {

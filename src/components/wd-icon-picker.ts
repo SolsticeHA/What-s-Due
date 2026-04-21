@@ -1,13 +1,12 @@
 import { LitElement, html, css, nothing } from "lit";
-import { customElement, property } from "lit/decorators.js";
-import { hasHaComponent } from "../ha-elements.js";
+import { property } from "lit/decorators.js";
+import { defineOnce, hasHaComponent } from "../ha-elements.js";
 
 /**
  * Thin wrapper around `ha-icon-picker`. Falls back to `ha-textfield` if HA's
  * icon picker hasn't been upgraded yet (rare — happens on first panel load).
  * Emits `value-changed` with { detail: { value } } to match HA conventions.
  */
-@customElement("wd-icon-picker")
 export class WdIconPicker extends LitElement {
   static override styles = css`
     :host { display: block; }
@@ -57,6 +56,8 @@ export class WdIconPicker extends LitElement {
     );
   }
 }
+
+defineOnce("wd-icon-picker", WdIconPicker);
 
 declare global {
   interface HTMLElementTagNameMap {

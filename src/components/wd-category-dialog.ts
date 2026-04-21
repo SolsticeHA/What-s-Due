@@ -1,6 +1,7 @@
 import { LitElement, html, css, nothing } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { property, state } from "lit/decorators.js";
 
+import { defineOnce } from "../ha-elements.js";
 import { layoutStyles } from "../shared-styles.js";
 import type { Strings } from "../i18n.js";
 import type { Category } from "../types.js";
@@ -21,7 +22,6 @@ export function draftFromCategory(c: Category): CategoryDraft {
   return { id: c.id, name: c.name, icon: c.icon, color: c.color };
 }
 
-@customElement("wd-category-dialog")
 export class WdCategoryDialog extends LitElement {
   static override styles = [
     layoutStyles,
@@ -117,6 +117,8 @@ export class WdCategoryDialog extends LitElement {
     `;
   }
 }
+
+defineOnce("wd-category-dialog", WdCategoryDialog);
 
 declare global {
   interface HTMLElementTagNameMap {

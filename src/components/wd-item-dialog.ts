@@ -1,6 +1,7 @@
 import { LitElement, html, nothing } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { property, state } from "lit/decorators.js";
 
+import { defineOnce } from "../ha-elements.js";
 import { layoutStyles } from "../shared-styles.js";
 import type { Strings } from "../i18n.js";
 import type { Category, Item, Recurrence } from "../types.js";
@@ -47,7 +48,6 @@ export function emptyDraft(categoryId: string): ItemDraft {
   };
 }
 
-@customElement("wd-item-dialog")
 export class WdItemDialog extends LitElement {
   static override styles = layoutStyles;
 
@@ -195,6 +195,8 @@ export class WdItemDialog extends LitElement {
     `;
   }
 }
+
+defineOnce("wd-item-dialog", WdItemDialog);
 
 declare global {
   interface HTMLElementTagNameMap {

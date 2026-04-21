@@ -1,11 +1,11 @@
 import { LitElement, html, css, nothing } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { property } from "lit/decorators.js";
 
+import { defineOnce } from "../ha-elements.js";
 import { layoutStyles } from "../shared-styles.js";
 import type { Strings } from "../i18n.js";
 import type { Category } from "../types.js";
 
-@customElement("wd-categories-dialog")
 export class WdCategoriesDialog extends LitElement {
   static override styles = [
     layoutStyles,
@@ -104,6 +104,8 @@ export class WdCategoriesDialog extends LitElement {
 
 // silence unused import
 void nothing;
+
+defineOnce("wd-categories-dialog", WdCategoriesDialog);
 
 declare global {
   interface HTMLElementTagNameMap {
