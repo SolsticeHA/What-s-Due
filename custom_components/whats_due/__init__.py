@@ -1,6 +1,7 @@
 """The What's Due integration."""
 from __future__ import annotations
 
+import json
 import logging
 from pathlib import Path
 
@@ -99,14 +100,30 @@ async def _async_register_panel(hass: HomeAssistant) -> None:
     if DOMAIN in hass.data.get("frontend_panels", {}):
         frontend.async_remove_panel(hass, DOMAIN)
 
+    # Append the integration version as a query param so browsers treat every
+    # release as a fresh module URL — otherwise cached bundles from older
+    # versions keep serving stale UI after HACS updates.
+    module_url = f"{PANEL_URL}?v={_read_manifest_version()}"
+
     await panel_custom.async_register_panel(
         hass=hass,
         webcomponent_name=PANEL_NAME,
         frontend_url_path=DOMAIN,
-        module_url=PANEL_URL,
+        module_url=module_url,
         sidebar_title=PANEL_TITLE,
         sidebar_icon=PANEL_ICON,
         require_admin=False,
         config={},
         embed_iframe=False,
     )
+
+
+def _read_manifest_version() -> str:
+    """Return the version string from manifest.json (fallback to 'dev')."""
+    try:
+        manifest = json.loads(
+            (Path(__file__).parent / "manifest.json").read_text()
+        )
+        return str(manifest.get("version") or "dev")
+    except Exception:  # noqa: BLE001
+        return "dev"
