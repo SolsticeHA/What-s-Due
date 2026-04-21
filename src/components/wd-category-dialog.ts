@@ -78,7 +78,9 @@ export class WdCategoryDialog extends LitElement {
       <ha-dialog
         open
         heading=${d.id ? s.categories : s.newCategory}
-        @closed=${this._cancel}
+        @closed=${(e: CustomEvent<{ action?: string } | null>) => {
+          if (e.detail?.action) this._cancel();
+        }}
       >
         <div class="form">
           <ha-textfield

@@ -53,7 +53,13 @@ export class WdCategoriesDialog extends LitElement {
   override render() {
     const s = this.strings;
     return html`
-      <ha-dialog open heading=${s.categories} @closed=${this._close}>
+      <ha-dialog
+        open
+        heading=${s.categories}
+        @closed=${(e: CustomEvent<{ action?: string } | null>) => {
+          if (e.detail?.action) this._close();
+        }}
+      >
         <div class="list">
           ${this.categories.length === 0
             ? html`<div class="empty">—</div>`

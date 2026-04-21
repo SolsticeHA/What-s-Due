@@ -54,7 +54,13 @@ export class WdSettingsDialog extends LitElement {
     const d = this._local;
 
     return html`
-      <ha-dialog open heading=${s.settings} @closed=${this._cancel}>
+      <ha-dialog
+        open
+        heading=${s.settings}
+        @closed=${(e: CustomEvent<{ action?: string } | null>) => {
+          if (e.detail?.action) this._cancel();
+        }}
+      >
         <div class="form">
           <p class="hint">
             ${s.warningDays} &gt; ${s.urgentDays} &gt; ${s.criticalDays}

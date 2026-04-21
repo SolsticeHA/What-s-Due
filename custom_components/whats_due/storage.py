@@ -21,6 +21,7 @@ from .const import (
     RECURRENCE_NONE,
     RECURRENCE_YEARLY,
     SIGNAL_ITEMS_UPDATED,
+    STATUS_COMPLETED,
     STATUS_CRITICAL,
     STATUS_EXPIRED,
     STATUS_OK,
@@ -184,15 +185,22 @@ class WhatsDueStore:
         return True
 
     async def async_mark_done(self, item_id: str) -> dict[str, Any] | None:
-        """For recurring items, advance the due date. For one-offs, delete."""
+        """Mark an item done.
+
+        Non-recurring → archive by stamping completed_at (user can still
+        see it under the "Done" filter and undo it).
+        Recurring → advance due date and stamp last_completed_at.
+        """
+        now_iso = datetime.now().isoformat(timespec="seconds")
         for idx, existing in enumerate(self._data["items"]):
             if existing["id"] != item_id:
                 continue
             recurrence = existing.get("recurrence") or RECURRENCE_NONE
             if recurrence == RECURRENCE_NONE:
-                self._data["items"].pop(idx)
+                updated = {**existing, "completed_at": now_iso}
+                self._data["items"][idx] = updated
                 await self._save()
-                return None
+                return self._decorate(updated)
             current = _parse_date(existing["due_date"])
             # advance from max(today, current) to guarantee future date
             base = max(current, _today())
@@ -201,7 +209,24 @@ class WhatsDueStore:
                 next_date = _advance_date(
                     _today(), recurrence, existing.get("recurrence_days")
                 )
-            updated = {**existing, "due_date": next_date.isoformat()}
+            updated = {
+                **existing,
+                "due_date": next_date.isoformat(),
+                "last_completed_at": now_iso,
+            }
+            self._data["items"][idx] = updated
+            await self._save()
+            return self._decorate(updated)
+        return None
+
+    async def async_uncomplete_item(self, item_id: str) -> dict[str, Any] | None:
+        """Clear completed_at on a non-recurring item (undo mark done)."""
+        for idx, existing in enumerate(self._data["items"]):
+            if existing["id"] != item_id:
+                continue
+            if not existing.get("completed_at"):
+                return self._decorate(existing)
+            updated = {k: v for k, v in existing.items() if k != "completed_at"}
             self._data["items"][idx] = updated
             await self._save()
             return self._decorate(updated)
@@ -279,7 +304,9 @@ class WhatsDueStore:
         due = _parse_date(item["due_date"])
         days_until = (due - _today()).days
 
-        if days_until < 0:
+        if item.get("completed_at"):
+            status = STATUS_COMPLETED
+        elif days_until < 0:
             status = STATUS_EXPIRED
         elif days_until <= critical:
             status = STATUS_CRITICAL

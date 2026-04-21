@@ -9,6 +9,7 @@ import type {
   HomeAssistant,
   Item,
   Settings,
+  StatusFilter,
 } from "./types.js";
 
 import "./components/wd-item-dialog.js";
@@ -47,6 +48,7 @@ export class WhatsDuePanel extends LitElement {
       --wd-status-urgent: #ff9800;
       --wd-status-critical: #f44336;
       --wd-status-expired: #b71c1c;
+      --wd-status-completed: #9e9e9e;
     }
 
     .app {
@@ -132,6 +134,11 @@ export class WhatsDuePanel extends LitElement {
     ha-card.status-urgent { border-left-color: var(--wd-status-urgent); }
     ha-card.status-critical { border-left-color: var(--wd-status-critical); }
     ha-card.status-expired { border-left-color: var(--wd-status-expired); }
+    ha-card.status-completed {
+      border-left-color: var(--wd-status-completed);
+      opacity: 0.78;
+    }
+    ha-card.status-completed .body h3 { text-decoration: line-through; }
 
     .icon-wrap {
       width: 44px;
@@ -171,6 +178,30 @@ export class WhatsDuePanel extends LitElement {
     .status-urgent .days { color: var(--wd-status-urgent); }
     .status-warning .days { color: var(--wd-status-warning); }
     .status-ok .days { color: var(--wd-status-ok); }
+    .status-completed .days { color: var(--wd-status-completed); }
+
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      padding: 10px 16px 0;
+    }
+    .segment {
+      font: inherit;
+      font-size: 0.85rem;
+      padding: 6px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--divider-color);
+      background: transparent;
+      color: var(--primary-text-color);
+      cursor: pointer;
+      transition: background 120ms ease;
+    }
+    .segment:hover { background: var(--secondary-background-color); }
+    .segment.active {
+      background: var(--primary-color);
+      color: var(--text-primary-color, #fff);
+      border-color: transparent;
+    }
 
     .actions {
       display: flex;
@@ -210,6 +241,7 @@ export class WhatsDuePanel extends LitElement {
     critical_days: 1,
   };
   @state() private activeCategory: string | "all" = "all";
+  @state() private statusFilter: StatusFilter = "active";
   @state() private search = "";
   @state() private dialog: DialogMode = null;
   @state() private loaded = false;
@@ -245,6 +277,11 @@ export class WhatsDuePanel extends LitElement {
   private filteredItems(): Item[] {
     const q = this.search.trim().toLowerCase();
     return this.items
+      .filter((it) =>
+        this.statusFilter === "done"
+          ? it.status === "completed"
+          : it.status !== "completed"
+      )
       .filter(
         (it) =>
           this.activeCategory === "all" || it.category_id === this.activeCategory
@@ -255,7 +292,15 @@ export class WhatsDuePanel extends LitElement {
           it.name.toLowerCase().includes(q) ||
           (it.notes || "").toLowerCase().includes(q)
       )
-      .sort((a, b) => a.days_until_due - b.days_until_due);
+      .sort((a, b) => {
+        if (this.statusFilter === "done") {
+          // Most recently completed first
+          const ta = a.completed_at ? Date.parse(a.completed_at) : 0;
+          const tb = b.completed_at ? Date.parse(b.completed_at) : 0;
+          return tb - ta;
+        }
+        return a.days_until_due - b.days_until_due;
+      });
   }
 
   // ---------- item actions ----------
@@ -277,6 +322,11 @@ export class WhatsDuePanel extends LitElement {
 
   private async markDone(item: Item) {
     await this.api.markDone(item.id);
+    await this.refresh();
+  }
+
+  private async uncomplete(item: Item) {
+    await this.api.uncompleteItem(item.id);
     await this.refresh();
   }
 
@@ -353,12 +403,20 @@ export class WhatsDuePanel extends LitElement {
   // ---------- utils ----------
 
   private formatDays(item: Item): string {
-    const d = item.days_until_due;
     const s = this.strings;
+    if (item.status === "completed" && item.completed_at) {
+      return `${s.completedOn} ${this._formatTimestamp(item.completed_at)}`;
+    }
+    const d = item.days_until_due;
     if (d < 0) return `${Math.abs(d)} ${s.daysOverdue}`;
     if (d === 0) return s.dueToday;
     if (d === 1) return s.dueTomorrow;
     return `${d} ${s.daysLeft}`;
+  }
+
+  private _formatTimestamp(iso: string): string {
+    // Render just the date portion; the backend emits ISO datetime.
+    return iso.slice(0, 10);
   }
 
   private closeDialog = () => {
@@ -388,6 +446,21 @@ export class WhatsDuePanel extends LitElement {
             <ha-icon icon="mdi:cog"></ha-icon>
           </ha-icon-button>
         </header>
+
+        <div class="filter-row">
+          <button
+            class="segment ${this.statusFilter === "active" ? "active" : ""}"
+            @click=${() => (this.statusFilter = "active")}
+          >
+            ${s.active}
+          </button>
+          <button
+            class="segment ${this.statusFilter === "done" ? "active" : ""}"
+            @click=${() => (this.statusFilter = "done")}
+          >
+            ${s.done}
+          </button>
+        </div>
 
         <div class="chips">
           <button
@@ -448,6 +521,7 @@ export class WhatsDuePanel extends LitElement {
   private _renderCard(item: Item) {
     const cat = this.getCategory(item.category_id);
     const s = this.strings;
+    const completed = item.status === "completed";
     return html`
       <ha-card class="status-${item.status}">
         <div class="icon-wrap" style="background: ${cat?.color ?? "#78909C"}">
@@ -458,22 +532,39 @@ export class WhatsDuePanel extends LitElement {
           <div class="meta">
             <span>${cat?.name ?? "—"}</span>
             <span>${item.due_date}</span>
+            ${item.last_completed_at && !completed
+              ? html`<span
+                  >${s.lastDoneOn}
+                  ${this._formatTimestamp(item.last_completed_at)}</span
+                >`
+              : nothing}
           </div>
           <div class="days">${this.formatDays(item)}</div>
         </div>
         <div class="actions">
-          <ha-icon-button
-            .label=${s.markDone}
-            @click=${() => this.markDone(item)}
-          >
-            <ha-icon icon="mdi:check"></ha-icon>
-          </ha-icon-button>
-          <ha-icon-button
-            .label=${s.editItem}
-            @click=${() => this.openEditItem(item)}
-          >
-            <ha-icon icon="mdi:pencil"></ha-icon>
-          </ha-icon-button>
+          ${completed
+            ? html`
+                <ha-icon-button
+                  .label=${s.undo}
+                  @click=${() => this.uncomplete(item)}
+                >
+                  <ha-icon icon="mdi:undo"></ha-icon>
+                </ha-icon-button>
+              `
+            : html`
+                <ha-icon-button
+                  .label=${s.markDone}
+                  @click=${() => this.markDone(item)}
+                >
+                  <ha-icon icon="mdi:check"></ha-icon>
+                </ha-icon-button>
+                <ha-icon-button
+                  .label=${s.editItem}
+                  @click=${() => this.openEditItem(item)}
+                >
+                  <ha-icon icon="mdi:pencil"></ha-icon>
+                </ha-icon-button>
+              `}
           <ha-icon-button
             .label=${s.deleteItem}
             @click=${() => this.deleteItem(item)}

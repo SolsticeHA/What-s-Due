@@ -47,6 +47,13 @@ export class WhatsDueApi {
     return this.hass.callWS({ type: `${DOMAIN}/mark_done`, item_id });
   }
 
+  uncompleteItem(item_id: string): Promise<{ item: Item | null }> {
+    return this.hass.callWS({
+      type: `${DOMAIN}/uncomplete_item`,
+      item_id,
+    });
+  }
+
   addCategory(payload: {
     name: string;
     icon?: string;

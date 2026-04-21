@@ -27,6 +27,7 @@ STATUS_WARNING: Final = "warning"
 STATUS_URGENT: Final = "urgent"
 STATUS_CRITICAL: Final = "critical"
 STATUS_EXPIRED: Final = "expired"
+STATUS_COMPLETED: Final = "completed"
 
 # Recurrence types
 RECURRENCE_NONE: Final = "none"

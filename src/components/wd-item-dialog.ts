@@ -88,7 +88,9 @@ export class WdItemDialog extends LitElement {
       <ha-dialog
         open
         heading=${d.id ? s.editItem : s.addItem}
-        @closed=${this._cancel}
+        @closed=${(e: CustomEvent<{ action?: string } | null>) => {
+          if (e.detail?.action) this._cancel();
+        }}
       >
         <div class="wd-form">
           <ha-textfield

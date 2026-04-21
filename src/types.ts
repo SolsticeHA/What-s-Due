@@ -1,5 +1,12 @@
 export type Recurrence = "none" | "monthly" | "yearly" | "custom";
-export type Status = "ok" | "warning" | "urgent" | "critical" | "expired";
+export type Status =
+  | "ok"
+  | "warning"
+  | "urgent"
+  | "critical"
+  | "expired"
+  | "completed";
+export type StatusFilter = "active" | "done";
 
 export interface Item {
   id: string;
@@ -14,6 +21,8 @@ export interface Item {
   created_at: string;
   days_until_due: number;
   status: Status;
+  completed_at?: string | null;
+  last_completed_at?: string | null;
 }
 
 export interface Category {

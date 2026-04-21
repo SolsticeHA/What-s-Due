@@ -20,6 +20,7 @@ def async_register_websocket_handlers(hass: HomeAssistant) -> None:
     websocket_api.async_register_command(hass, ws_update_item)
     websocket_api.async_register_command(hass, ws_delete_item)
     websocket_api.async_register_command(hass, ws_mark_done)
+    websocket_api.async_register_command(hass, ws_uncomplete_item)
     websocket_api.async_register_command(hass, ws_add_category)
     websocket_api.async_register_command(hass, ws_update_category)
     websocket_api.async_register_command(hass, ws_delete_category)
@@ -139,9 +140,34 @@ async def ws_mark_done(
     connection: websocket_api.ActiveConnection,
     msg: dict[str, Any],
 ) -> None:
-    """Mark an item as done. One-off items are removed; recurring items advance."""
+    """Mark an item as done.
+
+    Non-recurring items get archived (completed_at stamped, still visible
+    under the Done filter). Recurring items advance to next occurrence.
+    """
     store = get_store(hass)
     item = await store.async_mark_done(msg["item_id"])
+    connection.send_result(msg["id"], {"item": item})
+
+
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): f"{DOMAIN}/uncomplete_item",
+        vol.Required("item_id"): str,
+    }
+)
+@websocket_api.async_response
+async def ws_uncomplete_item(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+) -> None:
+    """Undo a mark-done on a non-recurring item (clears completed_at)."""
+    store = get_store(hass)
+    item = await store.async_uncomplete_item(msg["item_id"])
+    if item is None:
+        connection.send_error(msg["id"], "not_found", "Item not found")
+        return
     connection.send_result(msg["id"], {"item": item})
 
 

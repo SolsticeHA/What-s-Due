@@ -5,6 +5,11 @@ const EN = {
   editItem: "Edit item",
   deleteItem: "Delete",
   markDone: "Mark done",
+  undo: "Undo",
+  active: "Active",
+  done: "Done",
+  completedOn: "Completed",
+  lastDoneOn: "Last done",
   all: "All",
   categories: "Categories",
   settings: "Settings",
@@ -41,6 +46,7 @@ const EN = {
   statusUrgent: "Soon",
   statusCritical: "Very soon",
   statusExpired: "Expired",
+  statusCompleted: "Completed",
 };
 
 const RO: typeof EN = {
@@ -50,6 +56,11 @@ const RO: typeof EN = {
   editItem: "Editează",
   deleteItem: "Șterge",
   markDone: "Marchează ca făcut",
+  undo: "Anulează marcarea",
+  active: "Active",
+  done: "Făcute",
+  completedOn: "Finalizat",
+  lastDoneOn: "Ultima dată făcut",
   all: "Toate",
   categories: "Categorii",
   settings: "Setări",
@@ -86,6 +97,7 @@ const RO: typeof EN = {
   statusUrgent: "Aproape",
   statusCritical: "Foarte aproape",
   statusExpired: "Expirat",
+  statusCompleted: "Finalizat",
 };
 
 export type Strings = typeof EN;
