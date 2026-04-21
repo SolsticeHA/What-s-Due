@@ -37,6 +37,18 @@ def _default_settings() -> dict[str, Any]:
         "warning_days": DEFAULT_WARNING_DAYS,
         "urgent_days": DEFAULT_URGENT_DAYS,
         "critical_days": DEFAULT_CRITICAL_DAYS,
+        "notifications": _default_notifications(),
+    }
+
+
+def _default_notifications() -> dict[str, Any]:
+    return {
+        "enabled": False,
+        # Notify service names without the "notify." prefix
+        # (e.g. "mobile_app_my_phone", "persistent_notification").
+        "targets": [],
+        # Which status transitions trigger a notification.
+        "statuses": ["urgent", "critical", "expired"],
     }
 
 
@@ -97,10 +109,17 @@ class WhatsDueStore:
             self._data["categories"] = loaded.get("categories") or [
                 dict(c) for c in DEFAULT_CATEGORIES
             ]
-            self._data["settings"] = {
+            merged_settings = {
                 **_default_settings(),
                 **(loaded.get("settings") or {}),
             }
+            # Merge notifications dict deeply so older stores missing
+            # the notifications block get the defaults instead of None.
+            merged_settings["notifications"] = {
+                **_default_notifications(),
+                **(merged_settings.get("notifications") or {}),
+            }
+            self._data["settings"] = merged_settings
 
     async def _save(self) -> None:
         await self._store.async_save(self._data)
@@ -111,7 +130,8 @@ class WhatsDueStore:
 
         Called daily from the sensor platform (midnight) and after any change
         to items or thresholds. Each item stores its `last_status`; we diff
-        against the freshly computed value and emit on the event bus.
+        against the freshly computed value and emit on the event bus, and
+        optionally fire a notify service call.
         """
         dirty = False
         for item in self._data["items"]:
@@ -131,12 +151,55 @@ class WhatsDueStore:
                         "due_date": item["due_date"],
                     },
                 )
+                # Only notify on meaningful transitions — skip the very
+                # first observation (prev=None) so adding an item that's
+                # already warning/urgent doesn't immediately ping; and
+                # never notify when we're moving TO completed/ok.
+                if prev is not None and now not in ("ok", "completed"):
+                    await self._maybe_notify(item, decorated)
                 item["last_status"] = now
                 dirty = True
         if dirty:
             # persist last_status but don't re-dispatch items_updated to avoid
             # triggering re-renders that would run this method again
             await self._store.async_save(self._data)
+
+    async def _maybe_notify(
+        self, item: dict[str, Any], decorated: dict[str, Any]
+    ) -> None:
+        """Fire notify services when a status transition matches user settings."""
+        notif = self._data["settings"].get("notifications") or {}
+        if not notif.get("enabled"):
+            return
+        status = decorated["status"]
+        if status not in (notif.get("statuses") or []):
+            return
+        targets = notif.get("targets") or []
+        if not targets:
+            return
+
+        days = decorated["days_until_due"]
+        name = item["name"]
+        if days < 0:
+            body = f"{name} is {abs(days)} day(s) overdue"
+        elif days == 0:
+            body = f"{name} is due today"
+        elif days == 1:
+            body = f"{name} is due tomorrow"
+        else:
+            body = f"{name} is due in {days} day(s)"
+
+        for target in targets:
+            try:
+                await self.hass.services.async_call(
+                    "notify",
+                    target,
+                    {"title": "What's Due", "message": body},
+                    blocking=False,
+                )
+            except Exception:  # noqa: BLE001
+                # Don't let a bad target break status ticking for other items.
+                continue
 
     # ---------- items ----------
 
@@ -288,7 +351,15 @@ class WhatsDueStore:
         return dict(self._data["settings"])
 
     async def async_update_settings(self, payload: dict[str, Any]) -> dict[str, Any]:
-        self._data["settings"] = {**self._data["settings"], **payload}
+        merged = {**self._data["settings"], **payload}
+        # Deep-merge the notifications block so callers can send a partial
+        # patch (e.g. just toggle "enabled") without wiping targets/statuses.
+        if "notifications" in payload:
+            merged["notifications"] = {
+                **(self._data["settings"].get("notifications") or {}),
+                **(payload.get("notifications") or {}),
+            }
+        self._data["settings"] = merged
         await self._save()
         return dict(self._data["settings"])
 

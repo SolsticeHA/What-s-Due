@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Final
 
 DOMAIN: Final = "whats_due"
-PLATFORMS: Final = ["sensor"]
+PLATFORMS: Final = ["sensor", "calendar"]
 
 # Panel
 PANEL_URL: Final = "/whats_due_panel/whats-due-panel.js"

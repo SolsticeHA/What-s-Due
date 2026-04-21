@@ -239,6 +239,11 @@ export class WhatsDuePanel extends LitElement {
     warning_days: 30,
     urgent_days: 7,
     critical_days: 1,
+    notifications: {
+      enabled: false,
+      targets: [],
+      statuses: ["urgent", "critical", "expired"],
+    },
   };
   @state() private activeCategory: string | "all" = "all";
   @state() private statusFilter: StatusFilter = "active";

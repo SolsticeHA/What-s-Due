@@ -47,6 +47,12 @@ const EN = {
   statusCritical: "Very soon",
   statusExpired: "Expired",
   statusCompleted: "Completed",
+  notifications: "Notifications",
+  notificationsEnabled: "Send notifications on status change",
+  notificationsTargets: "Notify services",
+  notificationsTargetsHint:
+    "Comma-separated list of notify targets (without the 'notify.' prefix). Example: mobile_app_phone, persistent_notification",
+  notificationsStatuses: "Notify on statuses",
 };
 
 const RO: typeof EN = {
@@ -98,6 +104,12 @@ const RO: typeof EN = {
   statusCritical: "Foarte aproape",
   statusExpired: "Expirat",
   statusCompleted: "Finalizat",
+  notifications: "Notificări",
+  notificationsEnabled: "Trimite notificări la schimbare de status",
+  notificationsTargets: "Servicii notify",
+  notificationsTargetsHint:
+    "Listă separată prin virgulă, fără prefixul 'notify.'. Exemplu: mobile_app_telefon, persistent_notification",
+  notificationsStatuses: "Notifică pe statusurile",
 };
 
 export type Strings = typeof EN;

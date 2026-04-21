@@ -259,6 +259,11 @@ async def ws_delete_category(
         vol.Optional("warning_days"): int,
         vol.Optional("urgent_days"): int,
         vol.Optional("critical_days"): int,
+        vol.Optional("notifications"): {
+            vol.Optional("enabled"): bool,
+            vol.Optional("targets"): [str],
+            vol.Optional("statuses"): [str],
+        },
     }
 )
 @websocket_api.async_response
@@ -267,7 +272,7 @@ async def ws_update_settings(
     connection: websocket_api.ActiveConnection,
     msg: dict[str, Any],
 ) -> None:
-    """Update global settings (alert thresholds, etc.)."""
+    """Update global settings (alert thresholds, notifications, etc.)."""
     store = get_store(hass)
     payload = {k: v for k, v in msg.items() if k not in ("id", "type")}
     settings = await store.async_update_settings(payload)

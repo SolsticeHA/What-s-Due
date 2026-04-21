@@ -32,10 +32,17 @@ export interface Category {
   color: string;
 }
 
+export interface NotificationSettings {
+  enabled: boolean;
+  targets: string[];
+  statuses: string[];
+}
+
 export interface Settings {
   warning_days: number;
   urgent_days: number;
   critical_days: number;
+  notifications: NotificationSettings;
 }
 
 export interface StateSnapshot {
