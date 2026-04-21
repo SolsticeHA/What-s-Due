@@ -76,33 +76,38 @@ export class WhatsDuePanel extends LitElement {
 
     .chips {
       display: flex;
-      gap: 8px;
-      padding: 10px 16px;
+      gap: 6px;
+      padding: 6px 16px 12px;
       overflow-x: auto;
-      scrollbar-width: thin;
+      scrollbar-width: none;
       border-bottom: 1px solid var(--divider-color);
     }
+    .chips::-webkit-scrollbar { display: none; }
     .chip {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 6px 12px;
+      padding: 6px 14px;
       border-radius: 999px;
-      background: var(--secondary-background-color);
-      border: 1px solid var(--divider-color);
+      background: transparent;
+      border: 1px solid transparent;
       cursor: pointer;
       white-space: nowrap;
-      font-size: 0.85rem;
-      color: var(--primary-text-color);
-      transition: transform 120ms ease;
+      font: inherit;
+      font-size: 0.82rem;
+      color: var(--secondary-text-color);
+      transition: background 160ms ease, color 160ms ease;
     }
-    .chip:hover { transform: translateY(-1px); }
+    .chip:hover {
+      color: var(--primary-text-color);
+      background: var(--secondary-background-color);
+    }
     .chip.active {
       background: var(--primary-color);
       color: var(--text-primary-color, #fff);
-      border-color: transparent;
+      font-weight: 500;
     }
-    .chip ha-icon { --mdc-icon-size: 18px; }
+    .chip ha-icon { --mdc-icon-size: 16px; }
 
     .search {
       padding: 10px 16px 4px;
@@ -181,25 +186,51 @@ export class WhatsDuePanel extends LitElement {
 
     .filter-row {
       display: flex;
-      gap: 8px;
-      padding: 10px 16px 0;
+      padding: 14px 16px 4px;
+    }
+    .segmented {
+      display: inline-flex;
+      padding: 3px;
+      gap: 2px;
+      background: var(--secondary-background-color);
+      border-radius: 999px;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
     }
     .segment {
       font: inherit;
-      font-size: 0.85rem;
-      padding: 6px 16px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 6px 18px;
       border-radius: 999px;
-      border: 1px solid var(--divider-color);
+      border: none;
       background: transparent;
-      color: var(--primary-text-color);
+      color: var(--secondary-text-color);
       cursor: pointer;
-      transition: background 120ms ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 180ms ease, color 180ms ease,
+        box-shadow 180ms ease;
     }
-    .segment:hover { background: var(--secondary-background-color); }
+    .segment:not(.active):hover { color: var(--primary-text-color); }
     .segment.active {
+      background: var(--card-background-color, var(--primary-background-color));
+      color: var(--primary-text-color);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+    }
+    .segment .count {
+      font-weight: 500;
+      font-size: 0.72rem;
+      padding: 0 7px;
+      line-height: 17px;
+      border-radius: 999px;
+      background: rgba(128, 128, 128, 0.22);
+      min-width: 10px;
+      text-align: center;
+    }
+    .segment.active .count {
       background: var(--primary-color);
       color: var(--text-primary-color, #fff);
-      border-color: transparent;
     }
 
     .actions {
@@ -423,6 +454,14 @@ export class WhatsDuePanel extends LitElement {
     return iso.slice(0, 10);
   }
 
+  private _activeCount(): number {
+    return this.items.filter((i) => i.status !== "completed").length;
+  }
+
+  private _doneCount(): number {
+    return this.items.filter((i) => i.status === "completed").length;
+  }
+
   private closeDialog = () => {
     this.dialog = null;
   };
@@ -452,18 +491,26 @@ export class WhatsDuePanel extends LitElement {
         </header>
 
         <div class="filter-row">
-          <button
-            class="segment ${this.statusFilter === "active" ? "active" : ""}"
-            @click=${() => (this.statusFilter = "active")}
-          >
-            ${s.active}
-          </button>
-          <button
-            class="segment ${this.statusFilter === "done" ? "active" : ""}"
-            @click=${() => (this.statusFilter = "done")}
-          >
-            ${s.done}
-          </button>
+          <div class="segmented" role="tablist">
+            <button
+              role="tab"
+              aria-selected=${this.statusFilter === "active"}
+              class="segment ${this.statusFilter === "active" ? "active" : ""}"
+              @click=${() => (this.statusFilter = "active")}
+            >
+              <span>${s.active}</span>
+              <span class="count">${this._activeCount()}</span>
+            </button>
+            <button
+              role="tab"
+              aria-selected=${this.statusFilter === "done"}
+              class="segment ${this.statusFilter === "done" ? "active" : ""}"
+              @click=${() => (this.statusFilter = "done")}
+            >
+              <span>${s.done}</span>
+              <span class="count">${this._doneCount()}</span>
+            </button>
+          </div>
         </div>
 
         <div class="chips">
