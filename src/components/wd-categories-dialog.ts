@@ -1,35 +1,39 @@
 import { LitElement, html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
+import { layoutStyles } from "../shared-styles.js";
 import type { Strings } from "../i18n.js";
 import type { Category } from "../types.js";
 
 @customElement("wd-categories-dialog")
 export class WdCategoriesDialog extends LitElement {
-  static override styles = css`
-    .list { display: flex; flex-direction: column; }
-    .row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 8px 4px;
-      border-bottom: 1px solid var(--divider-color);
-    }
-    .row:last-child { border-bottom: 0; }
-    .swatch {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      flex-shrink: 0;
-    }
-    .name { flex: 1; }
-    .muted { color: var(--secondary-text-color); font-size: 0.85rem; }
-    .empty { padding: 20px 4px; color: var(--secondary-text-color); text-align: center; }
-  `;
+  static override styles = [
+    layoutStyles,
+    css`
+      .list { display: flex; flex-direction: column; }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 4px;
+        border-bottom: 1px solid var(--divider-color);
+      }
+      .row:last-child { border-bottom: 0; }
+      .swatch {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        flex-shrink: 0;
+      }
+      .name { flex: 1; }
+      .muted { color: var(--secondary-text-color); font-size: 0.85rem; }
+      .empty { padding: 20px 4px; color: var(--secondary-text-color); text-align: center; }
+    `,
+  ];
 
   @property({ attribute: false }) public strings!: Strings;
   @property({ attribute: false }) public categories: Category[] = [];
@@ -80,13 +84,13 @@ export class WdCategoriesDialog extends LitElement {
               )}
         </div>
 
-        <mwc-button slot="secondaryAction" @click=${this._close}>
-          ${s.close}
-        </mwc-button>
-        <mwc-button slot="primaryAction" @click=${this._add}>
-          <ha-icon icon="mdi:plus" slot="icon"></ha-icon>
-          ${s.newCategory}
-        </mwc-button>
+        <div class="wd-dialog-actions">
+          <button class="wd-btn" @click=${this._close}>${s.close}</button>
+          <button class="wd-btn primary" @click=${this._add}>
+            <ha-icon icon="mdi:plus"></ha-icon>
+            ${s.newCategory}
+          </button>
+        </div>
       </ha-dialog>
     `;
   }

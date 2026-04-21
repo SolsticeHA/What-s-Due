@@ -179,12 +179,10 @@ export class WdItemDialog extends LitElement {
           ></ha-textarea>
         </div>
 
-        <mwc-button slot="secondaryAction" @click=${this._cancel}>
-          ${s.cancel}
-        </mwc-button>
-        <mwc-button slot="primaryAction" @click=${this._save}>
-          ${s.save}
-        </mwc-button>
+        <div class="wd-dialog-actions">
+          <button class="wd-btn" @click=${this._cancel}>${s.cancel}</button>
+          <button class="wd-btn primary" @click=${this._save}>${s.save}</button>
+        </div>
       </ha-dialog>
     `;
   }

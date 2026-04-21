@@ -1,6 +1,7 @@
 import { LitElement, html, css, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
+import { layoutStyles } from "../shared-styles.js";
 import type { Strings } from "../i18n.js";
 import type { Category } from "../types.js";
 import "./wd-icon-picker.js";
@@ -22,20 +23,23 @@ export function draftFromCategory(c: Category): CategoryDraft {
 
 @customElement("wd-category-dialog")
 export class WdCategoryDialog extends LitElement {
-  static override styles = css`
-    .form { display: grid; gap: 12px; padding: 4px 0; }
-    .color-row { display: flex; gap: 10px; align-items: center; }
-    .color-row input[type="color"] {
-      padding: 0;
-      border: 1px solid var(--divider-color);
-      border-radius: 8px;
-      width: 48px;
-      height: 36px;
-      background: transparent;
-      cursor: pointer;
-    }
-    .color-label { color: var(--secondary-text-color); font-size: 0.85rem; }
-  `;
+  static override styles = [
+    layoutStyles,
+    css`
+      .form { display: grid; gap: 12px; padding: 4px 0; }
+      .color-row { display: flex; gap: 10px; align-items: center; }
+      .color-row input[type="color"] {
+        padding: 0;
+        border: 1px solid var(--divider-color);
+        border-radius: 8px;
+        width: 48px;
+        height: 36px;
+        background: transparent;
+        cursor: pointer;
+      }
+      .color-label { color: var(--secondary-text-color); font-size: 0.85rem; }
+    `,
+  ];
 
   @property({ attribute: false }) public strings!: Strings;
   @property({ attribute: false }) public draft!: CategoryDraft;
@@ -103,12 +107,10 @@ export class WdCategoryDialog extends LitElement {
           </div>
         </div>
 
-        <mwc-button slot="secondaryAction" @click=${this._cancel}>
-          ${s.cancel}
-        </mwc-button>
-        <mwc-button slot="primaryAction" @click=${this._save}>
-          ${s.save}
-        </mwc-button>
+        <div class="wd-dialog-actions">
+          <button class="wd-btn" @click=${this._cancel}>${s.cancel}</button>
+          <button class="wd-btn primary" @click=${this._save}>${s.save}</button>
+        </div>
       </ha-dialog>
     `;
   }

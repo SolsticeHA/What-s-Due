@@ -1,19 +1,23 @@
 import { LitElement, html, css, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
+import { layoutStyles } from "../shared-styles.js";
 import type { Strings } from "../i18n.js";
 import type { Settings } from "../types.js";
 
 @customElement("wd-settings-dialog")
 export class WdSettingsDialog extends LitElement {
-  static override styles = css`
-    .form { display: grid; gap: 12px; padding: 4px 0; min-width: 280px; }
-    .hint {
-      font-size: 0.85rem;
-      color: var(--secondary-text-color);
-      line-height: 1.4;
-    }
-  `;
+  static override styles = [
+    layoutStyles,
+    css`
+      .form { display: grid; gap: 12px; padding: 4px 0; min-width: 280px; }
+      .hint {
+        font-size: 0.85rem;
+        color: var(--secondary-text-color);
+        line-height: 1.4;
+      }
+    `,
+  ];
 
   @property({ attribute: false }) public strings!: Strings;
   @property({ attribute: false }) public settings!: Settings;
@@ -78,12 +82,10 @@ export class WdSettingsDialog extends LitElement {
           ></ha-textfield>
         </div>
 
-        <mwc-button slot="secondaryAction" @click=${this._cancel}>
-          ${s.cancel}
-        </mwc-button>
-        <mwc-button slot="primaryAction" @click=${this._save}>
-          ${s.save}
-        </mwc-button>
+        <div class="wd-dialog-actions">
+          <button class="wd-btn" @click=${this._cancel}>${s.cancel}</button>
+          <button class="wd-btn primary" @click=${this._save}>${s.save}</button>
+        </div>
       </ha-dialog>
     `;
   }

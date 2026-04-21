@@ -213,20 +213,17 @@ export class WhatsDuePanel extends LitElement {
   @state() private search = "";
   @state() private dialog: DialogMode = null;
   @state() private loaded = false;
-  @state() private depsReady = false;
 
   private api!: WhatsDueApi;
 
   override connectedCallback(): void {
     super.connectedCallback();
     this.api = new WhatsDueApi(this.hass);
-    void this._bootstrap();
-  }
-
-  private async _bootstrap(): Promise<void> {
-    await loadHaDependencies();
-    this.depsReady = true;
-    await this.refresh();
+    // Fire-and-forget: triggers HA to load ha-dialog / ha-button-menu / etc.
+    // Custom elements upgrade automatically once defined, so we render the
+    // UI immediately and let the framework patch it up as modules resolve.
+    void loadHaDependencies().catch(() => undefined);
+    void this.refresh();
   }
 
   private get strings(): Strings {
@@ -372,39 +369,24 @@ export class WhatsDuePanel extends LitElement {
 
   override render() {
     const s = this.strings;
-
-    if (!this.depsReady) {
-      return html`
-        <div class="app">
-          <header class="bar"><h1>${s.title}</h1></header>
-          <div class="empty">…</div>
-        </div>
-      `;
-    }
-
     const filtered = this.filteredItems();
 
     return html`
       <div class="app">
         <header class="bar">
           <h1>${s.title}</h1>
-          <ha-button-menu
-            corner="BOTTOM_END"
-            menuCorner="END"
-            @action=${this._onMenuAction}
+          <ha-icon-button
+            .label=${s.categories}
+            @click=${this.openCategories}
           >
-            <ha-icon-button slot="trigger" .label=${"menu"}>
-              <ha-icon icon="mdi:dots-vertical"></ha-icon>
-            </ha-icon-button>
-            <mwc-list-item graphic="icon">
-              <ha-icon slot="graphic" icon="mdi:tag-multiple"></ha-icon>
-              ${s.categories}
-            </mwc-list-item>
-            <mwc-list-item graphic="icon">
-              <ha-icon slot="graphic" icon="mdi:cog"></ha-icon>
-              ${s.settings}
-            </mwc-list-item>
-          </ha-button-menu>
+            <ha-icon icon="mdi:tag-multiple"></ha-icon>
+          </ha-icon-button>
+          <ha-icon-button
+            .label=${s.settings}
+            @click=${this.openSettings}
+          >
+            <ha-icon icon="mdi:cog"></ha-icon>
+          </ha-icon-button>
         </header>
 
         <div class="chips">
@@ -462,11 +444,6 @@ export class WhatsDuePanel extends LitElement {
       </div>
     `;
   }
-
-  private _onMenuAction = (e: CustomEvent<{ index: number }>) => {
-    if (e.detail.index === 0) this.openCategories();
-    else if (e.detail.index === 1) this.openSettings();
-  };
 
   private _renderCard(item: Item) {
     const cat = this.getCategory(item.category_id);
