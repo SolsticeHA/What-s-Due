@@ -61,4 +61,36 @@ export const layoutStyles = css`
     cursor: not-allowed;
     pointer-events: none;
   }
+
+  .wd-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .wd-field > span {
+    font-size: 0.75rem;
+    color: var(--secondary-text-color);
+    padding-left: 2px;
+  }
+  .wd-field > select {
+    font: inherit;
+    font-size: 1rem;
+    padding: 10px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--divider-color);
+    background: var(--card-background-color, var(--primary-background-color));
+    color: var(--primary-text-color);
+    min-height: 44px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+  }
+  .wd-field > select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+  }
 `;

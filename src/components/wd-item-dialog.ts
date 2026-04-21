@@ -108,25 +108,25 @@ export class WdItemDialog extends LitElement {
               this._patch("due_date", (e.target as HTMLInputElement).value)}
           ></ha-textfield>
 
-          <ha-select
-            .label=${s.category}
-            .value=${d.category_id}
-            fixedMenuPosition
-            @selected=${(e: CustomEvent & { target: HTMLSelectElement }) => {
-              const val = (e.target as HTMLSelectElement).value;
-              if (val) this._patch("category_id", val);
-            }}
-            @closed=${(e: Event) => e.stopPropagation()}
-          >
-            ${this.categories.map(
-              (c) => html`
-                <mwc-list-item .value=${c.id} graphic="icon">
-                  <ha-icon slot="graphic" .icon=${c.icon}></ha-icon>
-                  ${c.name}
-                </mwc-list-item>
-              `
-            )}
-          </ha-select>
+          <label class="wd-field">
+            <span>${s.category}</span>
+            <select
+              .value=${d.category_id}
+              @change=${(e: Event) =>
+                this._patch(
+                  "category_id",
+                  (e.target as HTMLSelectElement).value
+                )}
+            >
+              ${this.categories.map(
+                (c) => html`
+                  <option value=${c.id} ?selected=${c.id === d.category_id}>
+                    ${c.name}
+                  </option>
+                `
+              )}
+            </select>
+          </label>
 
           <wd-icon-picker
             .label=${s.icon}
@@ -135,21 +135,30 @@ export class WdItemDialog extends LitElement {
               this._patch("icon", e.detail.value)}
           ></wd-icon-picker>
 
-          <ha-select
-            .label=${s.recurrence}
-            .value=${d.recurrence}
-            fixedMenuPosition
-            @selected=${(e: Event) => {
-              const val = (e.target as HTMLSelectElement).value as Recurrence;
-              if (val) this._patch("recurrence", val);
-            }}
-            @closed=${(e: Event) => e.stopPropagation()}
-          >
-            <mwc-list-item value="none">${s.recurrenceNone}</mwc-list-item>
-            <mwc-list-item value="monthly">${s.recurrenceMonthly}</mwc-list-item>
-            <mwc-list-item value="yearly">${s.recurrenceYearly}</mwc-list-item>
-            <mwc-list-item value="custom">${s.recurrenceCustom}</mwc-list-item>
-          </ha-select>
+          <label class="wd-field">
+            <span>${s.recurrence}</span>
+            <select
+              .value=${d.recurrence}
+              @change=${(e: Event) =>
+                this._patch(
+                  "recurrence",
+                  (e.target as HTMLSelectElement).value as Recurrence
+                )}
+            >
+              <option value="none" ?selected=${d.recurrence === "none"}>
+                ${s.recurrenceNone}
+              </option>
+              <option value="monthly" ?selected=${d.recurrence === "monthly"}>
+                ${s.recurrenceMonthly}
+              </option>
+              <option value="yearly" ?selected=${d.recurrence === "yearly"}>
+                ${s.recurrenceYearly}
+              </option>
+              <option value="custom" ?selected=${d.recurrence === "custom"}>
+                ${s.recurrenceCustom}
+              </option>
+            </select>
+          </label>
 
           ${d.recurrence === "custom"
             ? html`
