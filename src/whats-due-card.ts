@@ -186,12 +186,14 @@ export class WhatsDueCard extends LitElement {
       --mdc-icon-button-size: 30px;
       --mdc-icon-size: 16px;
       color: var(--secondary-text-color);
-      opacity: 0;
-      transition: opacity 120ms ease;
       flex-shrink: 0;
+      transition: color 120ms ease, background 120ms ease;
+      border-radius: 50%;
     }
-    .row:hover .done-btn,
-    .row:focus-within .done-btn { opacity: 1; }
+    .done-btn:hover {
+      color: var(--wd-status-ok);
+      background: var(--secondary-background-color);
+    }
 
     /* ---------- mushroom appearance: chip-style compact ---------- */
 
@@ -483,7 +485,6 @@ export class WhatsDueCard extends LitElement {
           <div class="title">${item.name}</div>
           <div class="sub">${cat?.name ?? "—"} · ${item.due_date}</div>
         </div>
-        <div class="days">${this._formatDays(item)}</div>
         <ha-icon-button
           class="done-btn"
           .label=${s.markDone}
@@ -494,6 +495,7 @@ export class WhatsDueCard extends LitElement {
         >
           <ha-icon icon="mdi:check"></ha-icon>
         </ha-icon-button>
+        <div class="days">${this._formatDays(item)}</div>
       </div>
     `;
   }
