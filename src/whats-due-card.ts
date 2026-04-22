@@ -27,12 +27,18 @@ import {
   emptyCategoryDraft,
 } from "./components/wd-category-dialog.js";
 
+type CardAppearance = "default" | "mushroom";
+
 interface WhatsDueCardConfig {
   type: string;
   title?: string;
   max_items?: number;
   // Optional: restrict the card to one category id (hides everything else).
   category?: string;
+  // Show the +/tag/cog buttons in the header (default true).
+  show_header_actions?: boolean;
+  // Visual variant (default: slim rows, mushroom: compact chip-style).
+  appearance?: CardAppearance;
 }
 
 type DialogMode =
@@ -73,7 +79,7 @@ export class WhatsDueCard extends LitElement {
     .card-header {
       display: flex;
       align-items: center;
-      padding: 12px 8px 4px 16px;
+      padding: 14px 8px 6px 16px;
     }
     .card-header .name {
       flex: 1;
@@ -82,13 +88,13 @@ export class WhatsDueCard extends LitElement {
       color: var(--primary-text-color);
     }
     .card-header ha-icon-button {
-      --mdc-icon-button-size: 36px;
-      --mdc-icon-size: 20px;
+      --mdc-icon-button-size: 34px;
+      --mdc-icon-size: 18px;
       color: var(--secondary-text-color);
     }
 
     .card-content {
-      padding: 4px 8px 12px;
+      padding: 4px 10px 14px;
     }
 
     .empty {
@@ -98,35 +104,38 @@ export class WhatsDueCard extends LitElement {
       font-size: 0.9rem;
     }
 
+    .more {
+      padding: 8px 14px 4px;
+      font-size: 0.8rem;
+      color: var(--secondary-text-color);
+      text-align: center;
+    }
+
+    /* ---------- default appearance: clean single-line rows ---------- */
+
     .row {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 10px 8px;
-      border-radius: 8px;
+      padding: 8px 10px;
+      border-radius: 10px;
       cursor: pointer;
       transition: background 120ms ease;
-      border-left: 3px solid transparent;
-      padding-left: 9px;
     }
+    .row + .row { margin-top: 2px; }
     .row:hover { background: var(--secondary-background-color); }
-    .row.status-ok { border-left-color: var(--wd-status-ok); }
-    .row.status-warning { border-left-color: var(--wd-status-warning); }
-    .row.status-urgent { border-left-color: var(--wd-status-urgent); }
-    .row.status-critical { border-left-color: var(--wd-status-critical); }
-    .row.status-expired { border-left-color: var(--wd-status-expired); }
 
     .icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       color: #fff;
       flex-shrink: 0;
     }
-    .icon ha-icon { --mdc-icon-size: 20px; }
+    .icon ha-icon { --mdc-icon-size: 18px; }
 
     .main {
       flex: 1;
@@ -141,7 +150,7 @@ export class WhatsDueCard extends LitElement {
       white-space: nowrap;
     }
     .main .sub {
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       color: var(--secondary-text-color);
       margin-top: 1px;
       overflow: hidden;
@@ -150,9 +159,9 @@ export class WhatsDueCard extends LitElement {
     }
 
     .days {
-      font-size: 0.82rem;
+      font-size: 0.78rem;
       font-weight: 600;
-      padding: 3px 8px;
+      padding: 3px 9px;
       border-radius: 999px;
       background: var(--secondary-background-color);
       color: var(--primary-text-color);
@@ -174,23 +183,46 @@ export class WhatsDueCard extends LitElement {
     }
 
     .done-btn {
-      --mdc-icon-button-size: 32px;
-      --mdc-icon-size: 18px;
+      --mdc-icon-button-size: 30px;
+      --mdc-icon-size: 16px;
       color: var(--secondary-text-color);
       opacity: 0;
       transition: opacity 120ms ease;
       flex-shrink: 0;
     }
     .row:hover .done-btn,
-    .row:focus-within .done-btn {
-      opacity: 1;
+    .row:focus-within .done-btn { opacity: 1; }
+
+    /* ---------- mushroom appearance: chip-style compact ---------- */
+
+    :host([appearance="mushroom"]) .row {
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--ha-card-background, var(--card-background-color));
+      border: 1px solid var(--divider-color);
+      border-radius: 12px;
+      margin-bottom: 6px;
+    }
+    :host([appearance="mushroom"]) .row + .row { margin-top: 0; }
+    :host([appearance="mushroom"]) .row:hover { background: var(--secondary-background-color); }
+
+    :host([appearance="mushroom"]) .icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+    }
+    :host([appearance="mushroom"]) .icon ha-icon { --mdc-icon-size: 20px; }
+
+    :host([appearance="mushroom"]) .main .sub { display: none; }
+    :host([appearance="mushroom"]) .main .title { font-weight: 500; }
+
+    :host([appearance="mushroom"]) .days {
+      padding: 4px 10px;
+      font-size: 0.8rem;
     }
 
-    .more {
-      padding: 8px 14px 4px;
-      font-size: 0.82rem;
-      color: var(--secondary-text-color);
-      text-align: center;
+    :host([appearance="mushroom"]) .card-content {
+      padding: 6px 10px 14px;
     }
   `;
 
@@ -228,7 +260,9 @@ export class WhatsDueCard extends LitElement {
   }
 
   public getCardSize(): number {
-    return Math.min(this._config?.max_items ?? 5, this.items.length) + 1;
+    const max = this._config?.max_items ?? 5;
+    const rows = max === 0 ? this.items.length : Math.min(max, this.items.length);
+    return Math.max(1, rows) + 1;
   }
 
   override connectedCallback(): void {
@@ -382,23 +416,41 @@ export class WhatsDueCard extends LitElement {
     const max = this._config.max_items ?? 5;
     const shown = max > 0 ? visible.slice(0, max) : visible;
     const hiddenCount = visible.length - shown.length;
+    const showActions = this._config.show_header_actions ?? true;
+    const appearance = this._config.appearance ?? "default";
+
+    // Reflect the appearance onto the host so the :host([appearance="..."])
+    // selectors can switch styles without forcing a full render branch.
+    if (this.getAttribute("appearance") !== appearance) {
+      this.setAttribute("appearance", appearance);
+    }
 
     return html`
       <ha-card>
         <div class="card-header">
           <div class="name">${title}</div>
-          <ha-icon-button .label=${s.addItem} @click=${this._openAddItem}>
-            <ha-icon icon="mdi:plus"></ha-icon>
-          </ha-icon-button>
-          <ha-icon-button
-            .label=${s.categories}
-            @click=${this._openCategories}
-          >
-            <ha-icon icon="mdi:tag-multiple"></ha-icon>
-          </ha-icon-button>
-          <ha-icon-button .label=${s.settings} @click=${this._openSettings}>
-            <ha-icon icon="mdi:cog"></ha-icon>
-          </ha-icon-button>
+          ${showActions
+            ? html`
+                <ha-icon-button
+                  .label=${s.addItem}
+                  @click=${this._openAddItem}
+                >
+                  <ha-icon icon="mdi:plus"></ha-icon>
+                </ha-icon-button>
+                <ha-icon-button
+                  .label=${s.categories}
+                  @click=${this._openCategories}
+                >
+                  <ha-icon icon="mdi:tag-multiple"></ha-icon>
+                </ha-icon-button>
+                <ha-icon-button
+                  .label=${s.settings}
+                  @click=${this._openSettings}
+                >
+                  <ha-icon icon="mdi:cog"></ha-icon>
+                </ha-icon-button>
+              `
+            : nothing}
         </div>
 
         <div class="card-content">

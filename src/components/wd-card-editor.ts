@@ -7,11 +7,15 @@ import { pickStrings, type Strings } from "../i18n.js";
 import { layoutStyles } from "../shared-styles.js";
 import type { Category, HomeAssistant } from "../types.js";
 
+type CardAppearance = "default" | "mushroom";
+
 interface WhatsDueCardConfig {
   type: string;
   title?: string;
   max_items?: number;
   category?: string;
+  show_header_actions?: boolean;
+  appearance?: CardAppearance;
 }
 
 /**
@@ -25,6 +29,23 @@ export class WhatsDueCardEditor extends LitElement {
     css`
       :host { display: block; }
       .form { display: grid; gap: 14px; padding: 4px 0; }
+      .toggle {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .toggle input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--primary-color);
+        cursor: pointer;
+        margin: 0;
+      }
+      .toggle span.label {
+        padding-left: 0;
+        color: var(--primary-text-color);
+        font-size: 0.95rem;
+      }
       label.field {
         display: flex;
         flex-direction: column;
@@ -103,9 +124,11 @@ export class WhatsDueCardEditor extends LitElement {
   private _emit(patch: Partial<WhatsDueCardConfig>): void {
     if (!this._config) return;
     const merged: WhatsDueCardConfig = { ...this._config, ...patch };
-    // Drop empty optional fields so the saved YAML stays minimal.
+    // Drop empty/default optional fields so the saved YAML stays minimal.
     if (merged.title === "") delete merged.title;
     if (merged.category === "") delete merged.category;
+    if (merged.appearance === "default") delete merged.appearance;
+    if (merged.show_header_actions === true) delete merged.show_header_actions;
     this._config = merged;
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: merged } })
@@ -170,6 +193,40 @@ export class WhatsDueCardEditor extends LitElement {
           </select>
           <div class="hint">${s.editorCategoryHint}</div>
         </label>
+
+        <label class="field">
+          <span class="label">${s.editorAppearance}</span>
+          <select
+            .value=${cfg.appearance ?? "default"}
+            @change=${(e: Event) =>
+              this._emit({
+                appearance:
+                  (e.target as HTMLSelectElement).value as CardAppearance,
+              })}
+          >
+            <option value="default" ?selected=${(cfg.appearance ?? "default") === "default"}>
+              ${s.editorAppearanceDefault}
+            </option>
+            <option value="mushroom" ?selected=${cfg.appearance === "mushroom"}>
+              ${s.editorAppearanceMushroom}
+            </option>
+          </select>
+        </label>
+
+        <label class="toggle field">
+          <input
+            type="checkbox"
+            .checked=${cfg.show_header_actions ?? true}
+            @change=${(e: Event) =>
+              this._emit({
+                show_header_actions: (e.target as HTMLInputElement).checked,
+              })}
+          />
+          <span class="label">${s.editorShowActions}</span>
+        </label>
+        <div class="hint" style="margin-top:-8px;">
+          ${s.editorShowActionsHint}
+        </div>
       </div>
     `;
   }
