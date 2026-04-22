@@ -1,7 +1,6 @@
 """The What's Due integration."""
 from __future__ import annotations
 
-import json
 import logging
 from pathlib import Path
 
@@ -11,6 +10,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
+from homeassistant.loader import async_get_integration
 
 from .const import (
     CARD_STATIC_PATH,
@@ -113,17 +113,7 @@ async def _async_register_card(hass: HomeAssistant) -> None:
     # resource manually. The version query string busts browser cache between
     # releases. Guard with a flag since add_extra_js_url has no remove.
     if not hass.data[DOMAIN].get("js_registered"):
-        card_url = f"{CARD_URL}?v={_read_manifest_version()}"
+        integration = await async_get_integration(hass, DOMAIN)
+        card_url = f"{CARD_URL}?v={integration.version or 'dev'}"
         frontend.add_extra_js_url(hass, card_url)
         hass.data[DOMAIN]["js_registered"] = True
-
-
-def _read_manifest_version() -> str:
-    """Return the version string from manifest.json (fallback to 'dev')."""
-    try:
-        manifest = json.loads(
-            (Path(__file__).parent / "manifest.json").read_text()
-        )
-        return str(manifest.get("version") or "dev")
-    except Exception:  # noqa: BLE001
-        return "dev"
