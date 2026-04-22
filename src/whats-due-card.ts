@@ -15,6 +15,7 @@ import "./components/wd-item-dialog.js";
 import "./components/wd-category-dialog.js";
 import "./components/wd-categories-dialog.js";
 import "./components/wd-settings-dialog.js";
+import "./components/wd-card-editor.js";
 import {
   type ItemDraft,
   draftFromItem,
@@ -44,6 +45,12 @@ type DialogMode =
 export class WhatsDueCard extends LitElement {
   static getStubConfig(): WhatsDueCardConfig {
     return { type: "custom:whats-due-card", max_items: 5 };
+  }
+
+  // Tell HA to use our custom editor instead of the raw YAML pane when the
+  // user clicks "Edit" on the card in dashboard edit mode.
+  static async getConfigElement(): Promise<HTMLElement> {
+    return document.createElement("whats-due-card-editor");
   }
 
   static override styles = css`
