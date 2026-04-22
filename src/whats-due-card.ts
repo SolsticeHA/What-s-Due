@@ -48,8 +48,10 @@ export class WhatsDueCard extends LitElement {
   }
 
   // Tell HA to use our custom editor instead of the raw YAML pane when the
-  // user clicks "Edit" on the card in dashboard edit mode.
-  static async getConfigElement(): Promise<HTMLElement> {
+  // user clicks "Edit" on the card in dashboard edit mode. Must be sync —
+  // HA's card-picker preview hangs on a "loading" spinner if we return a
+  // Promise here.
+  static getConfigElement(): HTMLElement {
     return document.createElement("whats-due-card-editor");
   }
 
