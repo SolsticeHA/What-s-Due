@@ -196,7 +196,13 @@ export class WhatsDueCard extends LitElement {
 
   @property({ attribute: false }) public hass!: HomeAssistant;
 
-  @state() private _config!: WhatsDueCardConfig;
+  // Default config ensures the card renders a header even before setConfig
+  // is called — HA's card picker mounts us without a setConfig to show a
+  // preview tile, and returning `nothing` keeps HA stuck on a spinner.
+  @state() private _config: WhatsDueCardConfig = {
+    type: "custom:whats-due-card",
+    max_items: 5,
+  };
   @state() private items: Item[] = [];
   @state() private categories: Category[] = [];
   @state() private settings: Settings = {
@@ -210,7 +216,6 @@ export class WhatsDueCard extends LitElement {
     },
   };
   @state() private dialog: DialogMode = null;
-  @state() private loaded = false;
 
   private api?: WhatsDueApi;
 
@@ -248,7 +253,6 @@ export class WhatsDueCard extends LitElement {
     this.items = snap.items;
     this.categories = snap.categories;
     this.settings = snap.settings;
-    this.loaded = true;
   }
 
   private _getCategory(id: string): Category | undefined {
@@ -372,7 +376,6 @@ export class WhatsDueCard extends LitElement {
   // ---------- render ----------
 
   override render() {
-    if (!this._config) return nothing;
     const s = this.strings;
     const title = this._config.title || s.title;
     const visible = this._visibleItems();
@@ -399,9 +402,7 @@ export class WhatsDueCard extends LitElement {
         </div>
 
         <div class="card-content">
-          ${!this.loaded
-            ? nothing
-            : shown.length === 0
+          ${shown.length === 0
             ? html`<div class="empty">${s.empty}</div>`
             : shown.map((item) => this._renderRow(item))}
           ${hiddenCount > 0
