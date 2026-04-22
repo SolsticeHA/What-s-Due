@@ -798,22 +798,47 @@ function t(t,e,i,s){var a,o=arguments.length,r=o<3?e:null===s?s=Object.getOwnPro
       background: var(--secondary-background-color);
     }
 
-    /* ---------- mushroom appearance: chip-style compact ---------- */
+    /* ---------- mushroom appearance: each row is its own floating card ---------- */
+
+    /* Outer ha-card goes transparent so the individual row-cards don't sit
+       on top of a second visible card background. */
+    :host([appearance="mushroom"]) ha-card {
+      background: transparent;
+      box-shadow: none;
+      border: none;
+    }
+
+    :host([appearance="mushroom"]) .card-header {
+      padding: 4px 4px 8px 6px;
+    }
+
+    :host([appearance="mushroom"]) .card-content {
+      padding: 0 2px 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
 
     :host([appearance="mushroom"]) .row {
-      gap: 10px;
-      padding: 10px 12px;
+      gap: 12px;
+      padding: 12px 14px;
       background: var(--ha-card-background, var(--card-background-color));
-      border: 1px solid var(--divider-color);
-      border-radius: 12px;
-      margin-bottom: 6px;
+      border-radius: var(--ha-card-border-radius, 12px);
+      box-shadow: var(
+        --ha-card-box-shadow,
+        0 1px 2px rgba(0, 0, 0, 0.15)
+      );
+      border: 1px solid transparent;
     }
     :host([appearance="mushroom"]) .row + .row { margin-top: 0; }
-    :host([appearance="mushroom"]) .row:hover { background: var(--secondary-background-color); }
+    :host([appearance="mushroom"]) .row:hover {
+      background: var(--ha-card-background, var(--card-background-color));
+      border-color: var(--divider-color);
+    }
 
     :host([appearance="mushroom"]) .icon {
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
       border-radius: 10px;
     }
     :host([appearance="mushroom"]) .icon ha-icon { --mdc-icon-size: 20px; }
@@ -824,9 +849,5 @@ function t(t,e,i,s){var a,o=arguments.length,r=o<3?e:null===s?s=Object.getOwnPro
     :host([appearance="mushroom"]) .days {
       padding: 4px 10px;
       font-size: 0.8rem;
-    }
-
-    :host([appearance="mushroom"]) .card-content {
-      padding: 6px 10px 14px;
     }
   `,t([ht({attribute:!1})],Ut.prototype,"hass",void 0),t([pt()],Ut.prototype,"_config",void 0),t([pt()],Ut.prototype,"items",void 0),t([pt()],Ut.prototype,"categories",void 0),t([pt()],Ut.prototype,"settings",void 0),t([pt()],Ut.prototype,"dialog",void 0);const zt=window;zt.customCards=zt.customCards??[],zt.customCards.some(t=>"whats-due-card"===t.type)||zt.customCards.push({type:"whats-due-card",name:"What's Due",description:"Upcoming due dates from the What's Due integration.",documentationURL:"https://github.com/SolsticeHA/What-s-Due",preview:!1}),yt("whats-due-card",Ut);export{Ut as WhatsDueCard};
