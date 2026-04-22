@@ -5,7 +5,7 @@ import json
 import logging
 from pathlib import Path
 
-from homeassistant.components import frontend, panel_custom
+from homeassistant.components import frontend
 from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
@@ -13,11 +13,9 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 
 from .const import (
+    CARD_STATIC_PATH,
+    CARD_URL,
     DOMAIN,
-    PANEL_ICON,
-    PANEL_NAME,
-    PANEL_TITLE,
-    PANEL_URL,
     PLATFORMS,
     SIGNAL_ITEMS_UPDATED,
 )
@@ -50,7 +48,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     async_register_websocket_handlers(hass)
 
-    await _async_register_panel(hass)
+    await _async_register_card(hass)
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
@@ -73,7 +71,10 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
-        frontend.async_remove_panel(hass, DOMAIN)
+        # Leave the static path and extra_js_url in place — HA doesn't
+        # expose a safe way to remove them and they become no-ops if the
+        # files disappear. hass.data is cleared so the next setup starts
+        # fresh.
         hass.data.pop(DOMAIN, None)
     return unload_ok
 
@@ -83,39 +84,38 @@ async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> Non
     await hass.config_entries.async_reload(entry.entry_id)
 
 
-async def _async_register_panel(hass: HomeAssistant) -> None:
-    """Register the custom panel and serve its static bundle."""
+async def _async_register_card(hass: HomeAssistant) -> None:
+    """Serve the Lovelace card bundle and auto-load it on the frontend.
+
+    Clean up any leftover sidebar panel from pre-0.3.0 installs so the old
+    entry doesn't linger after an update.
+    """
+    # Old installs registered a sidebar panel at DOMAIN; remove it if present
+    # so updating from 0.2.x doesn't leave a broken entry.
+    if DOMAIN in hass.data.get("frontend_panels", {}):
+        frontend.async_remove_panel(hass, DOMAIN)
+
     panel_dir = Path(__file__).parent / "frontend"
 
     # Static path survives across entry reloads; only register it once per
     # HA lifetime to avoid "path already registered" errors.
     if not hass.data[DOMAIN].get("static_registered"):
         await hass.http.async_register_static_paths(
-            [StaticPathConfig("/whats_due_panel", str(panel_dir), cache_headers=False)]
+            [
+                StaticPathConfig(
+                    CARD_STATIC_PATH, str(panel_dir), cache_headers=False
+                )
+            ]
         )
         hass.data[DOMAIN]["static_registered"] = True
 
-    # If a previous entry lifecycle left the panel registered, remove it so
-    # panel_custom can re-register cleanly instead of raising "Overwriting panel".
-    if DOMAIN in hass.data.get("frontend_panels", {}):
-        frontend.async_remove_panel(hass, DOMAIN)
-
-    # Append the integration version as a query param so browsers treat every
-    # release as a fresh module URL — otherwise cached bundles from older
-    # versions keep serving stale UI after HACS updates.
-    module_url = f"{PANEL_URL}?v={_read_manifest_version()}"
-
-    await panel_custom.async_register_panel(
-        hass=hass,
-        webcomponent_name=PANEL_NAME,
-        frontend_url_path=DOMAIN,
-        module_url=module_url,
-        sidebar_title=PANEL_TITLE,
-        sidebar_icon=PANEL_ICON,
-        require_admin=False,
-        config={},
-        embed_iframe=False,
-    )
+    # Auto-register the card JS so users don't need to add it as a Lovelace
+    # resource manually. The version query string busts browser cache between
+    # releases. Guard with a flag since add_extra_js_url has no remove.
+    if not hass.data[DOMAIN].get("js_registered"):
+        card_url = f"{CARD_URL}?v={_read_manifest_version()}"
+        frontend.add_extra_js_url(hass, card_url)
+        hass.data[DOMAIN]["js_registered"] = True
 
 
 def _read_manifest_version() -> str:

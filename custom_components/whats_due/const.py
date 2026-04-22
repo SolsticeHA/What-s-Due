@@ -6,11 +6,10 @@ from typing import Final
 DOMAIN: Final = "whats_due"
 PLATFORMS: Final = ["sensor", "calendar"]
 
-# Panel
-PANEL_URL: Final = "/whats_due_panel/whats-due-panel.js"
-PANEL_TITLE: Final = "What's Due"
-PANEL_ICON: Final = "mdi:calendar-clock"
-PANEL_NAME: Final = "whats-due-panel"
+# Lovelace card (the JS is served from this path and auto-registered as a
+# frontend module URL so users don't need to add it as a resource manually).
+CARD_STATIC_PATH: Final = "/whats_due_panel"
+CARD_URL: Final = f"{CARD_STATIC_PATH}/whats-due-card.js"
 
 # Storage
 STORAGE_KEY: Final = f"{DOMAIN}.data"

@@ -6,9 +6,9 @@ import terser from "@rollup/plugin-terser";
 const isWatch = process.env.ROLLUP_WATCH === "true";
 
 export default {
-  input: "src/whats-due-panel.ts",
+  input: "src/whats-due-card.ts",
   output: {
-    file: "custom_components/whats_due/frontend/whats-due-panel.js",
+    file: "custom_components/whats_due/frontend/whats-due-card.js",
     format: "es",
     sourcemap: isWatch,
     inlineDynamicImports: true,
