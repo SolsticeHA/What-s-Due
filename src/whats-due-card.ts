@@ -426,6 +426,23 @@ export class WhatsDueCard extends LitElement {
     return `${d} ${s.daysLeft}`;
   }
 
+  /** Format an ISO date (YYYY-MM-DD) using the user's HA language locale. */
+  private _formatDate(iso: string): string {
+    if (!iso) return "";
+    const date = new Date(iso);
+    if (isNaN(date.getTime())) return iso;
+    const lang = this.hass?.language || undefined;
+    try {
+      return date.toLocaleDateString(lang, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+    } catch {
+      return iso;
+    }
+  }
+
   private _closeDialog = () => {
     this.dialog = null;
   };
@@ -504,7 +521,9 @@ export class WhatsDueCard extends LitElement {
         </div>
         <div class="main">
           <div class="title">${item.name}</div>
-          <div class="sub">${cat?.name ?? "—"} · ${item.due_date}</div>
+          <div class="sub">
+            ${cat?.name ?? "—"} · ${this._formatDate(item.due_date)}
+          </div>
         </div>
         <ha-icon-button
           class="done-btn"
