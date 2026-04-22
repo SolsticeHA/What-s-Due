@@ -503,6 +503,7 @@ if (!win.customCards.some((c) => c.type === "whats-due-card")) {
     type: "whats-due-card",
     name: "What's Due",
     description: "Upcoming due dates from the What's Due integration.",
+    documentationURL: "https://github.com/SolsticeHA/What-s-Due",
     preview: false,
   });
 }

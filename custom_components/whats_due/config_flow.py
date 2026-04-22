@@ -5,7 +5,7 @@ from typing import Any
 
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 
-from .const import DOMAIN, PANEL_TITLE
+from .const import DOMAIN
 
 
 class WhatsDueConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -19,4 +19,4 @@ class WhatsDueConfigFlow(ConfigFlow, domain=DOMAIN):
         """Create the single integration entry."""
         await self.async_set_unique_id(DOMAIN)
         self._abort_if_unique_id_configured()
-        return self.async_create_entry(title=PANEL_TITLE, data={})
+        return self.async_create_entry(title="What's Due", data={})
